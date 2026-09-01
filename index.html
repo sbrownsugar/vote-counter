@@ -1,0 +1,1551 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<title>เวทีนับโหวต</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  /* --- พื้นและเส้น (โทนกลางคืนอมน้ำเงิน เลือกให้เข้ากับสีแท่ง ไม่ใช่เทากลางๆ) --- */
+  --ground:#0b0e14;
+  --panel:#11141c;
+  --raised:#1a1f2b;
+  --raised-2:#232939;
+  --line:rgba(255,255,255,.085);
+  --line-2:rgba(255,255,255,.16);
+
+  /* --- ตัวอักษร --- */
+  --ink:#eef2fa;
+  --ink-2:#98a2ba;
+  --ink-3:#6b7590;
+
+  /* --- ทองสงวนไว้สำหรับ "อันดับ 1 ของหมวด" เท่านั้น ไม่ใช่สีตกแต่ง --- */
+  --gold:#f5b544;
+
+  --r:14px;
+  --f-display:'Chakra Petch','Segoe UI',Tahoma,sans-serif;
+  --f-ui:'IBM Plex Sans Thai','Segoe UI',Tahoma,sans-serif;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--f-ui);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+.num{font-family:var(--f-display);font-variant-numeric:tabular-nums;font-weight:700}
+
+/* ══════════════════════ หน้าคุม ══════════════════════ */
+.wrap{max-width:1180px;margin:0 auto;padding:20px 20px 120px}
+
+.topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:6px 0 18px}
+.mark{display:flex;align-items:flex-end;gap:3px;height:26px}
+.mark i{width:5px;border-radius:2px 2px 1px 1px;display:block}
+.mark i:nth-child(1){height:12px;background:#3987e5}
+.mark i:nth-child(2){height:22px;background:#c98500}
+.mark i:nth-child(3){height:17px;background:#199e70}
+.brand{font-family:var(--f-display);font-weight:700;font-size:19px;letter-spacing:.01em}
+.topbar .spacer{flex:1}
+
+.pill{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;
+  border:1px solid var(--line);background:var(--panel);
+  font-size:13px;color:var(--ink-2);white-space:nowrap;
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ink-3);flex:none}
+.pill.on{color:var(--ink);border-color:rgba(25,158,112,.45)}
+.pill.on .dot{background:#199e70;box-shadow:0 0 0 4px rgba(25,158,112,.18)}
+
+.btn{
+  padding:9px 15px;border-radius:10px;border:1px solid var(--line-2);
+  background:var(--raised);color:var(--ink);font-weight:500;font-size:14px;
+  transition:background .15s,border-color .15s,transform .08s;
+}
+.btn:hover{background:var(--raised-2);border-color:rgba(255,255,255,.28)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--gold);color:#14100a;border-color:transparent;font-weight:600}
+.btn.primary:hover{background:#ffc45c}
+.btn.ghost{background:transparent}
+.btn.danger:hover{border-color:rgba(230,103,103,.55);color:#f2a3a3}
+.tiny{padding:6px 11px;font-size:13px;border-radius:9px}
+
+/* แถบสรุป */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:24px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px}
+.stat .k{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.stat .v{font-family:var(--f-display);font-weight:700;font-size:34px;line-height:1.15;margin-top:2px;display:flex;align-items:center;gap:10px}
+.stat .v small{font-family:var(--f-ui);font-size:13px;font-weight:500;color:var(--ink-2)}
+.leads{display:flex;flex-direction:column;gap:5px;margin-top:7px;font-size:14px}
+.leadrow{display:flex;align-items:center;gap:8px;min-width:0}
+.leadrow .sq{width:10px;height:10px;border-radius:3px;background:var(--c);flex:none}
+.leadrow .g{color:var(--ink-3);flex:none}
+.leadrow .who{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leadrow .n{margin-left:auto;font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums;flex:none}
+
+.sechead{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;flex-wrap:wrap}
+.sechead h2{font-family:var(--f-display);font-weight:600;font-size:16px;margin:0;letter-spacing:.02em}
+.sechead p{margin:0;font-size:13px;color:var(--ink-3)}
+
+/* หมวด */
+.gsec{margin-bottom:26px}
+.ghead{display:flex;align-items:center;gap:10px;padding:0 2px 11px;flex-wrap:wrap}
+.ghead .spacer{flex:1}
+.gswatch{width:15px;height:15px;border-radius:5px;background:var(--g);flex:none}
+.gname{
+  background:transparent;border:1px solid transparent;border-radius:7px;padding:3px 7px;margin-left:-7px;
+  font-family:var(--f-display);font-weight:600;font-size:16px;width:auto;max-width:220px;min-width:80px;
+}
+.gname:hover{border-color:var(--line)}
+.gname:focus{border-color:var(--line-2);background:var(--panel);outline:none}
+.gsum{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* การ์ดผู้เข้าแข่ง */
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:14px}
+.card{
+  background:var(--raised);border:1px solid var(--line);border-radius:var(--r);
+  padding:15px 16px 16px;display:flex;flex-direction:column;gap:11px;position:relative;
+}
+.card.lead{border-color:rgba(245,181,68,.4)}
+.crow{display:flex;align-items:center;gap:9px}
+.keycap{
+  font-family:var(--f-display);font-weight:600;font-size:12px;min-width:22px;height:22px;
+  display:grid;place-items:center;border-radius:6px;background:var(--panel);
+  border:1px solid var(--line-2);color:var(--ink-3);flex:none;
+}
+.card.lead .keycap{background:var(--gold);color:#14100a;border-color:transparent}
+.swatch{width:12px;height:12px;border-radius:4px;background:var(--c);flex:none}
+.nameinput{
+  flex:1;min-width:0;background:transparent;border:1px solid transparent;border-radius:7px;
+  padding:3px 6px;font-weight:600;font-size:15px;margin-left:-6px;
+}
+.nameinput:hover{border-color:var(--line)}
+.nameinput:focus{border-color:var(--line-2);background:var(--panel);outline:none}
+.kill{width:26px;height:26px;border-radius:7px;color:var(--ink-3);flex:none;font-size:15px;line-height:1}
+.kill:hover{background:var(--panel);color:#f2a3a3}
+
+.count{display:flex;align-items:baseline;gap:9px}
+/* คะแนนพิมพ์ทับได้เลย — คลิกแล้วแก้เป็นเลขที่ต้องการ */
+.count .n{
+  font-family:var(--f-display);font-weight:700;font-size:44px;line-height:1;font-variant-numeric:tabular-nums;
+  background:transparent;border:0;border-bottom:2px dashed transparent;border-radius:3px;
+  padding:0 2px 2px;margin-left:-2px;color:var(--ink);cursor:text;min-width:0;
+}
+.count .n:hover{border-bottom-color:var(--line-2)}
+.count .n:focus{outline:none;border-bottom-color:var(--gold);background:var(--panel)}
+.count .n::-webkit-outer-spin-button,.count .n::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.count .share{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.track{height:7px;border-radius:4px;background:var(--panel);overflow:hidden}
+.track i{display:block;height:100%;background:var(--c);border-radius:4px;transition:width .45s cubic-bezier(.2,.9,.25,1)}
+
+.ops{display:grid;grid-template-columns:38px 1fr 46px 50px;gap:7px}
+.addrow{display:grid;grid-template-columns:1fr auto;gap:7px}
+.amt{
+  height:38px;width:100%;min-width:0;border-radius:10px;border:1px solid var(--line-2);
+  background:var(--panel);padding:0 11px;
+  font-family:var(--f-display);font-weight:600;font-size:16px;font-variant-numeric:tabular-nums;
+  -moz-appearance:textfield;
+}
+.amt::-webkit-outer-spin-button,.amt::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.amt:focus{outline:none;border-color:var(--ink-3);background:var(--raised-2)}
+.amt::placeholder{font-family:var(--f-ui);font-weight:400;font-size:13.5px;color:var(--ink-3)}
+.go{
+  height:38px;padding:0 15px;border-radius:10px;border:1px solid var(--line-2);background:var(--panel);
+  font-family:var(--f-display);font-weight:600;font-size:14px;color:var(--ink-2);
+  transition:background .13s,color .13s,border-color .13s;
+}
+.go:hover{background:var(--c);color:#0b0e14;border-color:transparent}
+.op{
+  height:42px;border-radius:10px;border:1px solid var(--line-2);background:var(--panel);
+  font-family:var(--f-display);font-weight:600;font-size:15px;color:var(--ink-2);
+  transition:background .13s,transform .08s,color .13s;
+}
+.op:hover{background:var(--raised-2);color:var(--ink)}
+.op:active{transform:translateY(1px)}
+.op.plus1{background:var(--c);color:#0b0e14;border-color:transparent;font-size:18px;font-weight:700}
+.op.plus1:hover{filter:brightness(1.12);color:#0b0e14}
+
+.emptyg{grid-column:1/-1;margin:0;font-size:13.5px;color:var(--ink-3)}
+
+/* แถบเครื่องมือล่าง */
+.dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:linear-gradient(to top,var(--ground) 62%,rgba(11,14,20,0));
+  padding:22px 20px 16px;
+}
+.dockin{
+  max-width:1180px;margin:0 auto;display:flex;gap:9px;flex-wrap:wrap;align-items:center;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px 12px;
+}
+.dockin .spacer{flex:1}
+
+/* ลิ้นชักตั้งค่า */
+.scrim{position:fixed;inset:0;background:rgba(5,7,11,.72);z-index:50;opacity:0;pointer-events:none;transition:opacity .22s}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);z-index:51;
+  background:var(--panel);border-left:1px solid var(--line);
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.9,.25,1);
+  display:flex;flex-direction:column;
+}
+.drawer.open{transform:none}
+.dhead{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dhead h2{margin:0;font-family:var(--f-display);font-size:17px;font-weight:600;flex:1}
+.dbody{overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:20px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field>label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.field input[type=text]{
+  background:var(--raised);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;
+}
+.field input[type=text]:focus{outline:none;border-color:var(--ink-3)}
+.seg{display:flex;gap:5px;background:var(--raised);border:1px solid var(--line);border-radius:11px;padding:4px}
+.seg button{flex:1;padding:8px;border-radius:8px;font-size:14px;color:var(--ink-2);font-weight:500}
+.seg button.on{background:var(--raised-2);color:var(--ink);box-shadow:0 1px 0 rgba(255,255,255,.06) inset}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;background:var(--raised);border:1px solid var(--line);border-radius:11px;cursor:pointer}
+.toggle span{font-size:14px}
+.sw{width:40px;height:23px;border-radius:999px;background:var(--raised-2);border:1px solid var(--line-2);position:relative;flex:none;transition:background .18s}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:var(--ink-3);transition:transform .18s,background .18s}
+.toggle.on .sw{background:rgba(25,158,112,.35);border-color:rgba(25,158,112,.6)}
+.toggle.on .sw::after{transform:translateX(17px);background:#199e70}
+.grow{display:flex;flex-direction:column;gap:8px;background:var(--raised);border:1px solid var(--line);border-radius:11px;padding:11px}
+.grow .gt{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.swatches{display:flex;gap:6px;flex-wrap:wrap}
+.sw-opt{width:28px;height:28px;border-radius:8px;border:2px solid transparent}
+.sw-opt.on{border-color:var(--ink)}
+.hint{font-size:12.5px;color:var(--ink-3);line-height:1.6;margin:0}
+.hint kbd{
+  font-family:var(--f-display);font-size:11.5px;background:var(--raised);border:1px solid var(--line-2);
+  border-radius:5px;padding:1px 6px;color:var(--ink-2);
+}
+
+/* ตารางผล */
+.sheet{
+  position:fixed;z-index:52;left:50%;top:50%;transform:translate(-50%,-46%) scale(.97);
+  width:min(600px,calc(100% - 32px));max-height:80vh;overflow:auto;
+  background:var(--panel);border:1px solid var(--line-2);border-radius:18px;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+}
+.sheet.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.sheet h2{margin:0 0 14px;font-family:var(--f-display);font-size:18px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+th{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-display);font-weight:600}
+tr.gband td{background:var(--raised);font-weight:600;font-family:var(--f-display)}
+tr.lead td{color:var(--gold)}
+.sheet .acts{display:flex;gap:9px;margin-top:16px}
+.copybox{width:100%;margin-top:12px;background:var(--raised);border:1px solid var(--line-2);border-radius:10px;padding:10px;font-family:var(--f-display);font-size:13px;resize:vertical}
+
+/* ══════════════════════ จอแสดงผล ══════════════════════ */
+.stage{
+  position:fixed;inset:0;z-index:60;background:var(--ground);
+  display:none;flex-direction:column;padding:clamp(16px,2.2vw,34px);
+}
+.stage.on{display:flex}
+.shead{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;padding-bottom:clamp(12px,1.6vw,22px)}
+.shead h1{
+  margin:0;font-family:var(--f-display);font-weight:700;
+  font-size:clamp(22px,3vw,52px);line-height:1.15;letter-spacing:.005em;text-wrap:balance;
+}
+.shead .spacer{flex:1}
+.stotal{text-align:right;line-height:1.1}
+.stotal .k{font-size:clamp(11px,1vw,17px);letter-spacing:.12em;color:var(--ink-2);font-weight:600}
+.stotal .v{font-family:var(--f-display);font-weight:700;font-size:clamp(24px,2.6vw,46px);font-variant-numeric:tabular-nums}
+.livedot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#199e70;margin-right:9px;vertical-align:middle;animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(25,158,112,.5)}50%{opacity:.55;box-shadow:0 0 0 7px rgba(25,158,112,0)}}
+
+.chart{flex:1;min-height:0;display:flex}
+
+/* ป้ายหมวด — คั่นกลุ่มด้วยเส้นบางๆ ไม่ใช่กล่องสี */
+.grpcap{
+  display:flex;align-items:center;justify-content:center;gap:.5em;
+  font-size:clamp(11px,1.05vw,20px);font-weight:600;color:var(--ink-2);
+  white-space:nowrap;overflow:hidden;
+}
+.grpdot{width:.75em;height:.75em;border-radius:3px;background:var(--g);flex:none}
+.grpsum{color:var(--ink-3);font-variant-numeric:tabular-nums;font-weight:500}
+.chart.solo .grpcap{display:none}   /* มีหมวดเดียว ไม่ต้องมีป้าย */
+
+/* --- แนวตั้ง --- */
+.chart.v{gap:clamp(16px,2.4vw,50px);align-items:stretch}
+.chart.v>.grp{flex:var(--m) 1 0;min-width:0;display:flex;flex-direction:column}
+.grpbars{flex:1;min-height:0;display:flex;gap:clamp(6px,.8vw,16px)}
+.grpbars>.col{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
+.chart.v .grpcap{
+  margin-top:clamp(7px,.8vw,14px);padding-top:clamp(7px,.8vw,14px);
+  border-top:1px solid var(--line);
+}
+.coltrack{
+  flex:1;min-height:0;display:flex;align-items:flex-end;justify-content:center;
+  padding-top:clamp(34px,3.6vw,72px);
+  border-bottom:1px solid var(--line-2);   /* เส้นฐาน 0 ของกราฟ */
+}
+/* แท่งไม่เต็มช่อง — เว้นอากาศไว้ให้อ่านง่ายเหมือนกราฟจริง ไม่ใช่บล็อกสีทึบ */
+.colfill{
+  width:min(78%,230px);background:var(--c);border-radius:9px 9px 2px 2px;min-height:4px;position:relative;
+  transition:height .6s cubic-bezier(.2,.9,.25,1);
+}
+.colval{
+  position:absolute;left:-40%;right:-40%;bottom:100%;margin-bottom:clamp(7px,.7vw,14px);
+  text-align:center;font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(17px,calc(27vw / var(--n)),50px);line-height:1;
+}
+.colfoot{padding-top:clamp(9px,1vw,16px);text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px}
+.crown{font-size:clamp(15px,1.6vw,30px);line-height:1.15}
+/* จองที่ให้มงกุฎทุกแท่งเท่ากัน ไม่งั้นแท่งอันดับ 1 จะยืนสูงกว่าเพื่อน เส้นฐานไม่ตรงกัน */
+.colfoot .crown{height:1.15em}
+.rowhead .crown:empty{display:none}
+.rank{
+  font-family:var(--f-display);font-weight:700;font-size:clamp(10px,.9vw,15px);
+  min-width:26px;height:23px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:999px;background:var(--raised);color:var(--ink-3);border:1px solid var(--line);
+}
+.lead .rank{background:var(--gold);color:#14100a;border-color:transparent}
+.colname{
+  font-size:clamp(12px,calc(17vw / var(--n)),27px);font-weight:600;line-height:1.25;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* --- แนวนอน --- */
+.chart.h{flex-direction:column;gap:clamp(12px,2.2vh,34px);justify-content:center}
+.chart.h>.grp{display:flex;flex-direction:column;gap:clamp(5px,.7vh,12px);flex:0 1 auto}
+.grprows{display:flex;flex-direction:column;gap:clamp(6px,calc(13vh / var(--n)),24px)}
+.chart.h .grpcap{
+  border-bottom:1px solid var(--line);justify-content:flex-start;
+  padding:0 0 clamp(4px,.5vh,9px);
+}
+.row{min-height:0;display:flex;align-items:center;gap:clamp(10px,1.1vw,20px)}
+.rowhead{width:clamp(120px,17vw,290px);flex:none;display:flex;align-items:center;gap:9px;min-width:0}
+.rowname{
+  font-size:clamp(13px,calc(36vh / var(--n)),30px);font-weight:600;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.rowtrack{
+  flex:1;min-width:0;height:clamp(20px,calc(52vh / var(--n)),90px);display:flex;align-items:center;
+  border-left:1px solid var(--line-2);      /* เส้นฐาน 0 ของกราฟ */
+}
+.rowfill{
+  height:100%;background:var(--c);border-radius:2px 9px 9px 2px;min-width:4px;
+  transition:width .6s cubic-bezier(.2,.9,.25,1);
+}
+.rowval{
+  width:clamp(58px,7vw,130px);flex:none;text-align:right;
+  font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums;
+  font-size:clamp(17px,calc(36vh / var(--n)),50px);line-height:1;
+}
+
+/* --- กราฟย่อบนหน้าคุม (ตัวอย่างจอ) ใช้ขนาดคงที่ ไม่อิง vw/vh --- */
+.preview{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;height:300px;display:flex}
+.chart.mini{gap:16px}
+.chart.mini .grpbars{gap:5px}
+.chart.mini .grpcap{font-size:11.5px;gap:.45em}
+.chart.mini.v .grpcap{margin-top:8px;padding-top:8px}
+.chart.mini .coltrack{padding-top:24px}
+.chart.mini .colfill{width:min(78%,54px)}
+.chart.mini .colval{font-size:16px;margin-bottom:6px}
+.chart.mini .colfoot{padding-top:9px;gap:4px}
+.chart.mini .colname{font-size:12px}
+.chart.mini .crown{font-size:13px}
+.chart.mini .rank{font-size:10px;height:18px;min-width:20px;padding:0 6px}
+.chart.mini.h{gap:12px}
+.chart.mini .grprows{gap:6px}
+.chart.mini .rowhead{width:130px;gap:7px}
+.chart.mini .rowname{font-size:12.5px}
+.chart.mini .rowtrack{height:20px}
+.chart.mini .rowval{font-size:16px;width:46px}
+
+/* จังหวะตอนโหวตเข้า */
+@keyframes bump{0%{filter:brightness(1)}22%{filter:brightness(1.75)}100%{filter:brightness(1)}}
+.bump{animation:bump .5s ease-out}
+.toast{
+  position:absolute;left:50%;bottom:clamp(18px,3vh,44px);transform:translate(-50%,14px);
+  display:flex;align-items:center;gap:11px;padding:11px 20px;border-radius:999px;
+  background:var(--raised);border:1px solid var(--line-2);box-shadow:0 12px 34px rgba(0,0,0,.55);
+  font-size:clamp(14px,1.2vw,21px);font-weight:600;
+  opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+/* โหมดคุมจากหน้าต่างเดียว แถบปุ่มอยู่ล่าง ย้ายป้ายแจ้งโหวตขึ้นไปบน จะได้ไม่ทับกัน */
+.stage.docked .toast{bottom:auto;top:clamp(4px,1vh,14px);transform:translate(-50%,-14px)}
+.stage.docked .toast.on{transform:translate(-50%,0)}
+.toast .d{width:11px;height:11px;border-radius:50%;background:var(--c);flex:none}
+.toast .gtag{color:var(--ink-3);font-weight:500}
+.toast .plus{font-family:var(--f-display);font-weight:700;color:var(--gold)}
+
+/* แถบคุมบนจอแสดงผล */
+.stagebar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
+  padding:10px 12px;border-radius:15px;
+  background:var(--panel);border:1px solid var(--line-2);
+}
+/* แบบลอยและซ่อนเอง — ใช้ตอนเปิดเป็นหน้าต่างที่สองบนจอผู้ชม จะได้ไม่มีปุ่มไปกวนคนดู */
+.stagebar.float{
+  position:absolute;left:50%;bottom:16px;transform:translate(-50%,calc(100% + 26px));
+  max-width:calc(100% - 32px);background:rgba(17,20,28,.94);box-shadow:0 14px 40px rgba(0,0,0,.6);
+  transition:transform .26s cubic-bezier(.2,.9,.25,1),opacity .2s;opacity:0;
+}
+.stagebar.float.on{transform:translate(-50%,0);opacity:1}
+/* แบบปักไว้ล่างจอ — ใช้ตอนคุมจากหน้าต่างเดียว มีที่ทางของตัวเอง ไม่ทับกราฟ */
+.stagebar.dock{position:relative;margin-top:clamp(10px,1.5vh,22px);border-color:var(--line)}
+
+.sbg{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-3);padding-left:6px}
+.sbg .d{width:8px;height:8px;border-radius:2px;background:var(--g);flex:none}
+
+/* ก้อนคุมของแต่ละคน: [−] ชื่อ+คะแนน [+] */
+.pod{display:inline-flex;align-items:stretch;background:var(--raised);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+.pm{
+  width:36px;font-family:var(--f-display);font-weight:700;font-size:18px;color:var(--ink-2);
+  background:transparent;transition:background .12s,color .12s;
+}
+.pm:hover{background:var(--raised-2);color:var(--ink)}
+.pm.plus:hover{background:var(--c);color:#0b0e14}
+.pi{
+  display:flex;align-items:center;gap:8px;padding:0 11px;height:38px;min-width:0;
+  border-left:1px solid var(--line);border-right:1px solid var(--line);
+}
+.pd{width:9px;height:9px;border-radius:3px;background:var(--c);flex:none}
+.pn{font-size:13.5px;font-weight:500;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pv{font-family:var(--f-display);font-weight:700;font-size:16px;font-variant-numeric:tabular-nums}
+
+/* ช่องกำหนดว่ากด + หรือ − ทีนึงให้เปลี่ยนกี่แต้ม */
+.stepbox{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);padding-right:4px}
+.stepbox input{
+  width:66px;height:38px;border-radius:10px;border:1px solid var(--line-2);background:var(--raised);
+  padding:0 9px;text-align:center;font-family:var(--f-display);font-weight:700;font-size:16px;
+  font-variant-numeric:tabular-nums;-moz-appearance:textfield;
+}
+.stepbox input::-webkit-outer-spin-button,.stepbox input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.stepbox input:focus{outline:none;border-color:var(--gold)}
+.sbsep{width:1px;height:24px;background:var(--line-2);flex:none;margin:0 4px}
+
+@media (max-width:640px){
+  .deck{grid-template-columns:1fr}
+  .count .n{font-size:38px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+
+<!-- ═══════════════ หน้าคุม ═══════════════ -->
+<div class="wrap" id="control">
+  <header class="topbar">
+    <div class="mark" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="brand">เวทีนับโหวต</div>
+    <div class="spacer"></div>
+    <div class="pill" id="linkPill"><span class="dot"></span><span id="linkText">จอแสดงผล: ยังไม่เปิด</span></div>
+    <button class="btn" id="btnOpen">เปิดจอแสดงผล ↗</button>
+    <button class="btn primary" id="btnFull">โหมดเต็มจอ</button>
+  </header>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="k">โหวตทั้งหมด</div>
+      <div class="v"><span class="num" id="stTotal">0</span><small id="stCount">0 ผู้เข้าแข่งขัน</small></div>
+    </div>
+    <div class="stat">
+      <div class="k">ผู้นำแต่ละหมวด</div>
+      <div class="leads" id="stLead"></div>
+    </div>
+  </div>
+
+  <div class="sechead">
+    <h2>กดรับโหวต</h2>
+    <p>กดเลข <kbd>1</kbd>–<kbd>9</kbd> บนคีย์บอร์ดก็ได้ · คลิกที่ชื่อหมวดหรือชื่อคนเพื่อแก้</p>
+  </div>
+  <div id="board"></div>
+
+  <div class="sechead" style="margin-top:28px">
+    <h2>ตัวอย่างจอแสดงผล</h2>
+    <p>ภาพเดียวกับที่ผู้ชมเห็นบนจอใหญ่ตอนนี้</p>
+  </div>
+  <div class="preview"><div class="chart v mini" id="preview"></div></div>
+</div>
+
+<!-- ═══════════════ แถบเครื่องมือล่าง ═══════════════ -->
+<div class="dock" id="dock">
+  <div class="dockin">
+    <button class="btn" id="btnUndo">↶ เลิกทำ <span id="undoN" style="color:var(--ink-3)"></span></button>
+    <button class="btn" id="btnAddGroup">+ เพิ่มหมวด</button>
+    <button class="btn ghost" id="btnSheet">ตารางผล</button>
+    <div class="spacer"></div>
+    <button class="btn ghost danger" id="btnReset">รีเซ็ตคะแนน</button>
+    <button class="btn" id="btnCfg">⚙ ตั้งค่า</button>
+  </div>
+</div>
+
+<!-- ═══════════════ ลิ้นชักตั้งค่า ═══════════════ -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="ตั้งค่า">
+  <div class="dhead">
+    <h2>ตั้งค่า</h2>
+    <button class="btn ghost" id="btnCfgClose">เสร็จ</button>
+  </div>
+  <div class="dbody">
+    <div class="field">
+      <label for="fTitle">ชื่องานที่ขึ้นบนจอ</label>
+      <input type="text" id="fTitle" placeholder="เช่น ประกวดดาว–เดือน 2569">
+    </div>
+    <div class="field">
+      <label>รูปแบบกราฟ</label>
+      <div class="seg" id="segOrient">
+        <button data-v="v">แท่งแนวตั้ง</button>
+        <button data-v="h">แท่งแนวนอน</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>การเรียงลำดับ</label>
+      <div class="seg" id="segSort">
+        <button data-v="votes">เรียงตามคะแนน</button>
+        <button data-v="fixed">ตามลำดับที่ตั้ง</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>ตัวเลือก</label>
+      <div class="toggle" id="tgCrown"><span>ติดมงกุฎให้ที่ 1 ของแต่ละหมวด</span><span class="sw"></span></div>
+      <div class="toggle" id="tgSound"><span>เสียงตอบรับตอนกดโหวต</span><span class="sw"></span></div>
+    </div>
+    <div class="field">
+      <label>สีประจำหมวด</label>
+      <div id="roster" style="display:flex;flex-direction:column;gap:10px"></div>
+      <p class="hint">คนในหมวดเดียวกันจะใช้สีนี้ไล่จากเข้มไปอ่อนตามลำดับ</p>
+    </div>
+    <p class="hint">
+      <b style="color:var(--ink-2)">ทางลัดบนคีย์บอร์ด</b><br>
+      <kbd>1</kbd>–<kbd>9</kbd> เพิ่ม 1 โหวต (นับเรียงจากหมวดแรกลงมา) · <kbd>Shift</kbd>+เลข เพิ่ม 5 โหวต<br>
+      <kbd>Ctrl</kbd>+<kbd>Z</kbd> เลิกทำ · <kbd>F</kbd> เต็มจอ · <kbd>Esc</kbd> ออกจากเต็มจอ<br><br>
+      คะแนนถูกบันทึกไว้ในเครื่องอัตโนมัติ ปิดเว็บแล้วเปิดใหม่คะแนนยังอยู่
+    </p>
+  </div>
+</aside>
+
+<!-- ═══════════════ ตารางผล ═══════════════ -->
+<div class="sheet" id="sheet" role="dialog" aria-label="ตารางผลโหวต">
+  <h2>ผลโหวต</h2>
+  <table>
+    <thead><tr><th style="width:56px">อันดับ</th><th>ผู้เข้าแข่งขัน</th><th class="n">โหวต</th><th class="n" style="width:82px">ในหมวด</th></tr></thead>
+    <tbody id="sheetBody"></tbody>
+  </table>
+  <div class="acts">
+    <button class="btn primary" id="btnCopy">คัดลอกผล</button>
+    <button class="btn ghost" id="btnSheetClose">ปิด</button>
+  </div>
+  <textarea class="copybox" id="copybox" rows="6" readonly hidden></textarea>
+</div>
+
+<!-- ═══════════════ จอแสดงผล ═══════════════ -->
+<section class="stage" id="stage" aria-label="จอแสดงผลโหวต">
+  <header class="shead">
+    <h1 id="sTitle">ประกวดดาว–เดือน</h1>
+    <div class="spacer"></div>
+    <div class="stotal">
+      <div class="k"><span class="livedot"></span>โหวตทั้งหมด</div>
+      <div class="v" id="sTotal">0</div>
+    </div>
+  </header>
+  <div class="chart v" id="chart"></div>
+  <div class="toast" id="toast">
+    <span class="d"></span><span id="toastName"></span>
+    <span class="gtag" id="toastGroup"></span><span class="plus" id="toastPlus"></span>
+  </div>
+  <div class="stagebar" id="stagebar"></div>
+</section>
+
+<script>
+(function(){
+'use strict';
+
+/* ─────────── ค่าคงที่ ─────────── */
+var KEY = 'votecast.v2';
+var OLDKEY = 'votecast.v1';
+var WNAME = 'votecast_display';
+
+/* สีประจำหมวด — ลำดับนี้ผ่านการตรวจตาบอดสีมาแล้ว อย่าสลับลำดับ */
+var PALETTE = ['#3987e5','#d95926','#199e70','#c98500','#d55181','#008300','#9085e9','#e66767'];
+/* คนในหมวดเดียวกันไล่เฉดด้วยการผสมขาว ทุกขั้นยังคอนทราสต์ >= 3.3:1 บนพื้นเข้ม */
+var SHADE = [0, .17, .32, .45, .55, .63];
+var MAXG = 6, MAXC = 24;
+
+var IS_DISPLAY = (window.name === WNAME) || (location.hash === '#display');
+
+/* ─────────── สถานะ ─────────── */
+var S = null, undoStack = [], displayWin = null, bc = null, seq = 0;
+var stepVal = 1;   /* แถบล่างจอ: กด + หรือ − ทีนึงเปลี่ยนกี่แต้ม */
+
+function uid(p){ return p + Math.floor(performance.now() * 1000).toString(36) + (++seq); }
+
+function seed(){
+  return {
+    title:'ประกวดดาว–เดือน',
+    groups:[ {id:'g0',name:'ดาว',hue:PALETTE[0]}, {id:'g1',name:'เดือน',hue:PALETTE[1]} ],
+    cands:[
+      {id:'c0',name:'หมายเลข 1',gid:'g0',votes:0},
+      {id:'c1',name:'หมายเลข 2',gid:'g0',votes:0},
+      {id:'c2',name:'หมายเลข 1',gid:'g1',votes:0},
+      {id:'c3',name:'หมายเลข 2',gid:'g1',votes:0}
+    ],
+    orient:'v', sortBy:'votes', crown:true, sound:true
+  };
+}
+
+function load(){
+  var raw = null;
+  try { raw = localStorage.getItem(KEY) || localStorage.getItem(OLDKEY); } catch(e){}
+  if (raw) {
+    try {
+      var p = JSON.parse(raw);
+      if (p && Array.isArray(p.cands) && p.cands.length) return normalize(p);
+    } catch(e){}
+  }
+  return seed();
+}
+
+function normalize(p){
+  var d = seed(), groups;
+
+  if (Array.isArray(p.groups) && p.groups.length) {
+    groups = p.groups.slice(0, MAXG).map(function(g, i){
+      return {
+        id:   String(g.id || 'g' + i),
+        name: String(g.name == null ? 'หมวด ' + (i+1) : g.name),
+        hue:  PALETTE.indexOf(g.hue) >= 0 ? g.hue : PALETTE[i % PALETTE.length]
+      };
+    });
+  } else {
+    /* ข้อมูลเวอร์ชันเก่าที่ยังไม่มีหมวด — ยกทุกคนไปไว้ในหมวดเดียว */
+    groups = [{ id:'g0', name:'ผู้เข้าแข่งขัน', hue:PALETTE[0] }];
+  }
+
+  var known = {};
+  groups.forEach(function(g){ known[g.id] = true; });
+
+  var src = Array.isArray(p.cands) && p.cands.length ? p.cands : d.cands;
+  var cands = src.slice(0, MAXC).map(function(c, i){
+    return {
+      id:    String(c.id || 'c' + i),
+      name:  String(c.name == null ? 'หมายเลข ' + (i+1) : c.name),
+      gid:   known[c.gid] ? c.gid : groups[0].id,   /* คนที่หมวดหาย ให้ไปอยู่หมวดแรก */
+      votes: Math.max(0, Math.round(Number(c.votes) || 0))
+    };
+  });
+  if (!cands.length) cands = [{ id:'c0', name:'หมายเลข 1', gid:groups[0].id, votes:0 }];
+
+  return {
+    title:  typeof p.title === 'string' ? p.title : d.title,
+    orient: p.orient === 'h' ? 'h' : 'v',
+    sortBy: p.sortBy === 'fixed' ? 'fixed' : 'votes',
+    crown:  p.crown !== false,
+    sound:  p.sound !== false,
+    groups: groups,
+    cands:  cands
+  };
+}
+
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+
+/* ─────────── สี ─────────── */
+function mixWhite(hex, f){
+  var n = parseInt(hex.slice(1), 16);
+  var r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  r = Math.round(r + (255 - r) * f);
+  g = Math.round(g + (255 - g) * f);
+  b = Math.round(b + (255 - b) * f);
+  return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
+}
+function groupById(gid){
+  for (var i = 0; i < S.groups.length; i++) if (S.groups[i].id === gid) return S.groups[i];
+  return S.groups[0];
+}
+/* สีผูกกับ "ลำดับที่ตั้งไว้" ไม่ใช่อันดับคะแนน แท่งจึงไม่เปลี่ยนสีตอนแซงกัน */
+function colorOf(c){
+  var g = groupById(c.gid), k = 0;
+  for (var i = 0; i < S.cands.length; i++) {
+    if (S.cands[i].gid !== c.gid) continue;
+    if (S.cands[i].id === c.id) break;
+    k++;
+  }
+  return mixWhite(g.hue, SHADE[Math.min(k, SHADE.length - 1)]);
+}
+
+/* ─────────── การเชื่อมหน้าต่าง ─────────── */
+try { bc = new BroadcastChannel('votecast'); } catch(e){ bc = null; }
+
+function hasOwner(){
+  try { return !!(IS_DISPLAY && window.opener && !window.opener.closed); } catch(e){ return false; }
+}
+function post(w, msg){ try { if (w && !w.closed) w.postMessage(msg, '*'); } catch(e){} }
+
+/* ข้อความเดียวกันอาจมาถึงสองทาง (postMessage + BroadcastChannel)
+   ติดเลขลำดับไว้กันวาดซ้ำ ซึ่งจะทำให้กราฟกระตุกตอนสลับอันดับ */
+var SID = 'v' + Math.random().toString(36).slice(2), rev = 0, lastSid = null, lastRev = -1;
+
+function broadcast(extra){
+  rev++;
+  var msg = { vc:2, type:'state', sid:SID, rev:rev, state:S, fx:extra || null };
+  try { if (bc) bc.postMessage(msg); } catch(e){}
+  post(displayWin, msg);
+  try { if (IS_DISPLAY && window.opener) post(window.opener, msg); } catch(e){}
+}
+
+function commit(fx){ save(); broadcast(fx); render(fx); }
+
+function onMessage(m){
+  if (!m || m.vc !== 2) return;
+  if (m.type === 'state') {
+    if (m.sid === lastSid && m.rev <= lastRev) return;   /* เคยวาดไปแล้ว */
+    lastSid = m.sid; lastRev = m.rev;
+    S = normalize(m.state);
+    render(m.fx);
+  }
+  else if (m.type === 'cmd')   { applyCmd(m.cmd); commit(m.cmd.type === 'vote' ? m.cmd : null); }
+  else if (m.type === 'hello') { broadcast(null); }
+}
+window.addEventListener('message', function(e){ onMessage(e.data); });
+if (bc) bc.onmessage = function(e){ onMessage(e.data); };
+window.addEventListener('storage', function(e){
+  if (e.key !== KEY || !e.newValue) return;
+  try { S = normalize(JSON.parse(e.newValue)); render(null); } catch(err){}
+});
+
+/* ─────────── คำสั่ง ─────────── */
+function byId(id){ for (var i=0;i<S.cands.length;i++) if (S.cands[i].id === id) return S.cands[i]; return null; }
+
+function applyCmd(cmd){
+  var c, g;
+  if (cmd.type === 'vote') {
+    c = byId(cmd.id); if (!c) return;
+    var was = c.votes;
+    c.votes = Math.max(0, c.votes + cmd.n);
+    var real = c.votes - was;
+    if (real) undoStack.push({ id:cmd.id, n:real });
+    if (undoStack.length > 300) undoStack.shift();
+  }
+  else if (cmd.type === 'undo') {
+    var last = undoStack.pop(); if (!last) return;
+    c = byId(last.id); if (c) c.votes = Math.max(0, c.votes - last.n);
+  }
+  /* ตั้งคะแนนเป็นเลขที่พิมพ์ไปเลย — เก็บส่วนต่างไว้ใน undoStack จะได้เลิกทำได้เหมือนกัน */
+  else if (cmd.type === 'setvotes') {
+    c = byId(cmd.id); if (!c) return;
+    var want = Math.max(0, Math.min(999999, Math.round(Number(cmd.n) || 0)));
+    var diff = want - c.votes;
+    if (!diff) return;
+    c.votes = want;
+    undoStack.push({ id:cmd.id, n:diff });
+    if (undoStack.length > 300) undoStack.shift();
+  }
+  else if (cmd.type === 'set')    { S[cmd.k] = cmd.v; }
+  else if (cmd.type === 'rename') { c = byId(cmd.id); if (c) c.name = cmd.name; }
+  else if (cmd.type === 'add') {
+    if (S.cands.length >= MAXC) return;
+    var gid = cmd.gid && groupById(cmd.gid) ? cmd.gid : S.groups[0].id;
+    var n = 0;
+    S.cands.forEach(function(x){ if (x.gid === gid) n++; });
+    S.cands.push({ id:uid('c'), name:'หมายเลข ' + (n + 1), gid:gid, votes:0 });
+  }
+  else if (cmd.type === 'remove') {
+    if (S.cands.length <= 1) return;
+    S.cands = S.cands.filter(function(x){ return x.id !== cmd.id; });
+    undoStack = undoStack.filter(function(u){ return u.id !== cmd.id; });
+  }
+  else if (cmd.type === 'addgroup') {
+    if (S.groups.length >= MAXG) return;
+    var used = {};
+    S.groups.forEach(function(x){ used[x.hue] = true; });
+    var hue = PALETTE[S.groups.length % PALETTE.length];
+    for (var i = 0; i < PALETTE.length; i++) if (!used[PALETTE[i]]) { hue = PALETTE[i]; break; }
+    var ng = { id:uid('g'), name:'หมวด ' + (S.groups.length + 1), hue:hue };
+    S.groups.push(ng);
+    if (S.cands.length < MAXC) S.cands.push({ id:uid('c'), name:'หมายเลข 1', gid:ng.id, votes:0 });
+  }
+  else if (cmd.type === 'removegroup') {
+    if (S.groups.length <= 1) return;
+    S.groups = S.groups.filter(function(x){ return x.id !== cmd.gid; });
+    var gone = {};
+    S.cands.forEach(function(x){ if (x.gid === cmd.gid) gone[x.id] = true; });
+    S.cands = S.cands.filter(function(x){ return x.gid !== cmd.gid; });
+    undoStack = undoStack.filter(function(u){ return !gone[u.id]; });
+    if (!S.cands.length) S.cands.push({ id:uid('c'), name:'หมายเลข 1', gid:S.groups[0].id, votes:0 });
+  }
+  else if (cmd.type === 'renamegroup')  { g = groupById(cmd.gid); if (g) g.name = cmd.name; }
+  else if (cmd.type === 'recolorgroup') { g = groupById(cmd.gid); if (g) g.hue = cmd.hue; }
+  else if (cmd.type === 'reset') {
+    S.cands.forEach(function(x){ x.votes = 0; });
+    undoStack = [];
+  }
+}
+
+/* จุดเข้าเดียวของทุกการกระทำ — ถ้าเราเป็นหน้าต่างลูก ส่งให้แม่ตัดสิน */
+function act(cmd){
+  if (hasOwner()) { post(window.opener, { vc:2, type:'cmd', cmd:cmd }); return; }
+  applyCmd(cmd);
+  commit(cmd.type === 'vote' ? cmd : null);
+}
+
+/* ─────────── ตัวช่วยอ่านข้อมูล ─────────── */
+function total(){ return S.cands.reduce(function(a,c){ return a + c.votes; }, 0); }
+
+/* สมาชิกตามลำดับที่ตั้งไว้ (ปุ่มบนหน้าคุมจะได้ไม่สลับที่ระหว่างงาน) */
+function fixedMembers(gid){ return S.cands.filter(function(c){ return c.gid === gid; }); }
+function flatFixed(){
+  var out = [];
+  S.groups.forEach(function(g){ out = out.concat(fixedMembers(g.id)); });
+  return out;
+}
+
+/* อันดับ/ผู้นำ คิดแยกในแต่ละหมวด เพราะแต่ละหมวดมีผู้ชนะของตัวเอง */
+function infoOf(gid){
+  var arr = [];
+  S.cands.forEach(function(c, i){ if (c.gid === gid) arr.push({ c:c, i:i }); });
+  arr.sort(function(a,b){ return b.c.votes - a.c.votes || a.i - b.i; });
+  var ranked = arr.map(function(x){ return x.c; });
+  var rank = {}, lead = {}, tot = 0, prev = null, rk = 0;
+  ranked.forEach(function(c, i){
+    if (c.votes !== prev) { rk = i + 1; prev = c.votes; }
+    rank[c.id] = rk; tot += c.votes;
+  });
+  if (ranked.length && ranked[0].votes > 0) {
+    var top = ranked[0].votes;
+    ranked.forEach(function(c){ if (c.votes === top) lead[c.id] = true; });
+  }
+  return { ranked:ranked, rank:rank, lead:lead, total:tot };
+}
+function allInfo(){
+  var m = {};
+  S.groups.forEach(function(g){ m[g.id] = infoOf(g.id); });
+  return m;
+}
+/* แกนเดียวทั้งกราฟ — เทียบข้ามหมวดได้ตรงๆ */
+function scaleMax(){
+  var m = 0;
+  S.cands.forEach(function(c){ if (c.votes > m) m = c.votes; });
+  return m > 0 ? m : 1;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]; }); }
+
+var reduceMotion = false;
+try { reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
+
+/* ─────────── เสียง ─────────── */
+var actx = null;
+function blip(up){
+  if (!S.sound) return;
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    var t = actx.currentTime, o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(up ? 660 : 300, t);
+    o.frequency.exponentialRampToValueAtTime(up ? 990 : 220, t + 0.09);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.12, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.19);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + 0.21);
+  } catch(e){}
+}
+
+/* ═══════════════ วาดหน้าคุม ═══════════════ */
+var boardEl = document.getElementById('board');
+
+/* ช่องพิมพ์คะแนนต้องกว้างตามจำนวนหลัก ตัวเลขเป็น tabular-nums เลข 1 ตัว = 1ch พอดี */
+function amtWidth(s){ return 'calc(' + Math.max(2, String(s).length) + 'ch + 14px)'; }
+
+function renderControl(){
+  var t = total(), info = allInfo(), max = scaleMax(), flat = flatFixed();
+  killArmed = null;   /* วาดใหม่แล้วปุ่มลบหมวดกลับเป็นปกติ ต้องกดยืนยันใหม่เสมอ */
+
+  document.getElementById('stTotal').textContent = t.toLocaleString('th-TH');
+  document.getElementById('stCount').textContent = S.cands.length + ' คน · ' + S.groups.length + ' หมวด';
+
+  var lh = '';
+  S.groups.forEach(function(g){
+    var gi = info[g.id], top = gi.ranked[0];
+    lh += '<div class="leadrow">' +
+      '<span class="sq" style="--c:' + g.hue + '"></span>' +
+      '<span class="g">' + esc(g.name) + '</span>' +
+      '<span class="who">' + (top && gi.total > 0 ? esc(top.name) : 'ยังไม่มีโหวต') + '</span>' +
+      (top && gi.total > 0 ? '<span class="n">' + top.votes + '</span>' : '') +
+      '</div>';
+  });
+  document.getElementById('stLead').innerHTML = lh;
+
+  document.getElementById('undoN').textContent = undoStack.length ? '(' + undoStack.length + ')' : '';
+  document.getElementById('btnUndo').disabled = !undoStack.length;
+  document.getElementById('btnUndo').style.opacity = undoStack.length ? 1 : .45;
+
+  var html = '';
+  S.groups.forEach(function(g){
+    var mem = fixedMembers(g.id), gi = info[g.id];
+    html += '<section class="gsec">' +
+      '<div class="ghead">' +
+        '<span class="gswatch" style="--g:' + g.hue + '"></span>' +
+        '<input class="gname" data-gname="' + g.id + '" value="' + esc(g.name) + '" aria-label="ชื่อหมวด" size="' + Math.max(6, g.name.length) + '">' +
+        '<span class="gsum">' + gi.total + ' โหวต · ' + mem.length + ' คน</span>' +
+        '<div class="spacer"></div>' +
+        (S.cands.length < MAXC ? '<button class="btn tiny" data-gadd="' + g.id + '">+ เพิ่มผู้เข้าแข่ง</button>' : '') +
+        (S.groups.length > 1 ? '<button class="kill" data-gkill="' + g.id + '" title="ลบหมวดนี้ทั้งหมวด" aria-label="ลบหมวด ' + esc(g.name) + '">✕</button>' : '') +
+      '</div><div class="deck">';
+
+    if (!mem.length) {
+      html += '<p class="emptyg">ยังไม่มีผู้เข้าแข่งขันในหมวดนี้ — กดปุ่ม “+ เพิ่มผู้เข้าแข่ง” ด้านบน</p>';
+    }
+    mem.forEach(function(c){
+      var idx = flat.indexOf(c);
+      var col = colorOf(c);
+      var pct = gi.total === 0 ? 0 : Math.round(c.votes / gi.total * 100);
+      html +=
+        '<div class="card' + (gi.lead[c.id] ? ' lead' : '') + '" style="--c:' + col + '">' +
+          '<div class="crow">' +
+            '<span class="keycap">' + (idx >= 0 && idx < 9 ? (idx+1) : '·') + '</span>' +
+            '<span class="swatch"></span>' +
+            '<input class="nameinput" value="' + esc(c.name) + '" data-name="' + c.id + '" aria-label="ชื่อผู้เข้าแข่งขัน">' +
+            (S.cands.length > 1 ? '<button class="kill" data-kill="' + c.id + '" title="ลบออก" aria-label="ลบ ' + esc(c.name) + '">✕</button>' : '') +
+          '</div>' +
+          '<div class="count">' +
+            '<input class="n" data-set="' + c.id + '" value="' + c.votes + '" inputmode="numeric" ' +
+                   'style="width:' + amtWidth(String(c.votes)) + '" ' +
+                   'aria-label="คะแนนของ ' + esc(c.name) + ' แก้ได้โดยพิมพ์ทับ" title="พิมพ์ทับเพื่อแก้คะแนนเป็นเลขนี้เลย">' +
+            '<span class="share">' + (gi.total === 0 ? 'ยังไม่มีโหวต' : pct + '% ในหมวด · ที่ ' + gi.rank[c.id]) + '</span></div>' +
+          '<div class="track"><i style="width:' + (c.votes / max * 100) + '%"></i></div>' +
+          '<div class="ops">' +
+            '<button class="op" data-v="' + c.id + '" data-n="-1" title="ลบ 1 โหวต">−</button>' +
+            '<button class="op plus1" data-v="' + c.id + '" data-n="1">+1 โหวต</button>' +
+            '<button class="op" data-v="' + c.id + '" data-n="5">+5</button>' +
+            '<button class="op" data-v="' + c.id + '" data-n="10">+10</button>' +
+          '</div>' +
+          '<div class="addrow">' +
+            '<input class="amt" type="number" step="1" inputmode="numeric" data-amt="' + c.id + '" ' +
+                   'placeholder="ใส่จำนวนเอง เช่น 25" aria-label="จำนวนโหวตที่จะเพิ่มให้ ' + esc(c.name) + '">' +
+            '<button class="go" data-go="' + c.id + '">เพิ่ม</button>' +
+          '</div>' +
+        '</div>';
+    });
+    html += '</div></section>';
+  });
+
+  /* เก็บเลขที่พิมพ์ค้างไว้ในช่อง "ใส่จำนวนเอง" ไม่ให้หายตอนวาดใหม่
+     (เช่น กำลังพิมพ์อยู่แล้วมีโหวตเข้ามาจากอีกหน้าต่าง) */
+  var amts = {};
+  Array.prototype.forEach.call(boardEl.querySelectorAll('[data-amt]'), function(el){
+    if (el.value !== '') amts[el.dataset.amt] = el.value;
+  });
+
+  /* ถ้ากำลังพิมพ์อยู่ ให้กลับไปที่ช่องเดิม ตำแหน่งเดิม หลังวาดใหม่ */
+  var a = document.activeElement, keepSel = null, keepVal = null, caret = 0;
+  if (a && a.dataset) {
+    if      (a.dataset.name)  keepSel = '[data-name="'  + a.dataset.name  + '"]';
+    else if (a.dataset.gname) keepSel = '[data-gname="' + a.dataset.gname + '"]';
+    else if (a.dataset.amt)   keepSel = '[data-amt="'   + a.dataset.amt   + '"]';
+    else if (a.dataset.set) {
+      keepSel = '[data-set="' + a.dataset.set + '"]';
+      keepVal = a.value;      /* กำลังแก้คะแนนค้างอยู่ อย่าเพิ่งเขียนทับด้วยค่าจริง */
+    }
+    if (keepSel) { try { caret = a.selectionStart; } catch(e){ caret = null; } }
+  }
+
+  boardEl.innerHTML = html;
+
+  var id2;
+  for (id2 in amts) {
+    var box = boardEl.querySelector('[data-amt="' + id2 + '"]');
+    if (box) box.value = amts[id2];
+  }
+
+  if (keepSel) {
+    var back = boardEl.querySelector(keepSel);
+    if (back) {
+      if (keepVal !== null) { back.value = keepVal; back.style.width = amtWidth(keepVal || '0'); }
+      back.focus();
+      if (caret != null) { try { back.setSelectionRange(caret, caret); } catch(e){} }
+    }
+  }
+
+  var ag = document.getElementById('btnAddGroup');
+  ag.disabled = S.groups.length >= MAXG;
+  ag.style.opacity = S.groups.length >= MAXG ? .45 : 1;
+}
+
+/* ═══════════════ วาดกราฟ ═══════════════ */
+/* ใช้ตัววาดตัวเดียวกันทั้งจอใหญ่และกราฟย่อบนหน้าคุม ต่างกันแค่ ctx */
+function makeCtx(el, mini){ return { el:el, mini:!!mini, map:{}, key:null }; }
+var stageCtx = makeCtx(document.getElementById('chart'), false);
+var prevCtx  = makeCtx(document.getElementById('preview'), true);
+
+function shownGroups(info){
+  return S.groups.filter(function(g){ return info[g.id].ranked.length > 0; });
+}
+
+function paintChart(ctx, fx){
+  var info = allInfo(), max = scaleMax(), t = total();
+  var groups = shownGroups(info);
+
+  ctx.el.style.setProperty('--n', String(Math.max(S.cands.length, 1)));
+
+  /* สร้าง DOM ใหม่เมื่อโครงหมวด/สมาชิก/รูปแบบกราฟเปลี่ยน (สลับอันดับเฉยๆ ไม่ต้องสร้างใหม่) */
+  var key = S.orient + '#' + groups.map(function(g){
+    return g.id + ':' + fixedMembers(g.id).map(function(c){ return c.id; }).join(',');
+  }).join('|');
+
+  if (ctx.key !== key) {
+    ctx.el.className = 'chart ' + S.orient + (ctx.mini ? ' mini' : '') + (groups.length <= 1 ? ' solo' : '');
+    ctx.el.innerHTML = '';
+    ctx.map = {};
+    groups.forEach(function(g){
+      var mem = fixedMembers(g.id);
+      var gEl = document.createElement('div');
+      gEl.className = 'grp';
+      gEl.style.setProperty('--m', String(mem.length));
+      gEl.style.setProperty('--g', g.hue);
+
+      var bars = document.createElement('div');
+      bars.className = S.orient === 'v' ? 'grpbars' : 'grprows';
+      var cap = document.createElement('div');
+      cap.className = 'grpcap';
+      cap.innerHTML = '<span class="grpdot"></span><span class="grpname"></span><span class="grpsum"></span>';
+
+      mem.forEach(function(c){
+        var el = document.createElement('div');
+        if (S.orient === 'v') {
+          el.className = 'col';
+          el.innerHTML =
+            '<div class="coltrack"><div class="colfill"><span class="colval num">0</span></div></div>' +
+            '<div class="colfoot"><span class="crown"></span><span class="rank"></span><span class="colname"></span></div>';
+        } else {
+          el.className = 'row';
+          el.innerHTML =
+            '<div class="rowhead"><span class="crown"></span><span class="rank"></span><span class="rowname"></span></div>' +
+            '<div class="rowtrack"><div class="rowfill"></div></div>' +
+            '<div class="rowval num">0</div>';
+        }
+        bars.appendChild(el);
+        ctx.map[c.id] = el;
+      });
+
+      /* แนวตั้ง: ป้ายหมวดอยู่ใต้แท่ง / แนวนอน: อยู่เหนือแถว */
+      if (S.orient === 'v') { gEl.appendChild(bars); gEl.appendChild(cap); }
+      else                  { gEl.appendChild(cap); gEl.appendChild(bars); }
+      gEl.dataset.gid = g.id;
+      ctx.el.appendChild(gEl);
+    });
+    ctx.key = key;
+  }
+
+  /* FLIP: จำตำแหน่งเดิมไว้ก่อนสลับอันดับ */
+  var before = {}, id;
+  if (!reduceMotion) {
+    for (id in ctx.map) before[id] = ctx.map[id].getBoundingClientRect();
+  }
+
+  groups.forEach(function(g){
+    var gi = info[g.id];
+    var gEl = ctx.el.querySelector('.grp[data-gid="' + g.id + '"]');
+    if (gEl) {
+      gEl.querySelector('.grpname').textContent = g.name;
+      gEl.querySelector('.grpsum').textContent = gi.total > 0 ? gi.total.toLocaleString('th-TH') : '';
+    }
+    var order = S.sortBy === 'votes' ? gi.ranked : fixedMembers(g.id);
+    order.forEach(function(c, idx){
+      var el = ctx.map[c.id];
+      if (!el) return;
+      el.style.order = idx;
+      el.style.setProperty('--c', colorOf(c));
+      el.classList.toggle('lead', !!gi.lead[c.id]);
+
+      el.querySelector('.crown').textContent = (S.crown && gi.lead[c.id] && gi.total > 0) ? '👑' : '';
+      el.querySelector('.rank').textContent  = gi.total > 0 ? '#' + gi.rank[c.id] : '–';
+
+      /* เว้นหัวไว้ 12% ไม่ให้แท่งที่ 1 ชนขอบบน — ความยาวแท่งยังแปรตามคะแนนตรงๆ เหมือนเดิม */
+      var pct = (c.votes / max) * 88;
+      el.title = g.name + ' — ' + c.name + ' — ' + c.votes + ' โหวต' +
+                 (gi.total > 0 ? ' (' + Math.round(c.votes / gi.total * 100) + '% ในหมวด)' : '');
+      if (S.orient === 'v') {
+        el.querySelector('.colfill').style.height = pct + '%';
+        el.querySelector('.colval').textContent = c.votes;
+        el.querySelector('.colname').textContent = c.name;
+      } else {
+        el.querySelector('.rowfill').style.width = pct + '%';
+        el.querySelector('.rowval').textContent = c.votes;
+        el.querySelector('.rowname').textContent = c.name;
+      }
+    });
+  });
+
+  /* FLIP: เลื่อนกลับไปที่เดิมแล้วปล่อยให้ไหลไปตำแหน่งใหม่ */
+  if (!reduceMotion) {
+    var moved = [], k;
+    for (k in ctx.map) {
+      var b = before[k]; if (!b) continue;
+      var r = ctx.map[k].getBoundingClientRect();
+      var dx = b.left - r.left, dy = b.top - r.top;
+      if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) moved.push([ctx.map[k], dx, dy]);
+    }
+    if (moved.length) {
+      moved.forEach(function(m){
+        m[0].style.transition = 'none';
+        m[0].style.transform = 'translate(' + m[1] + 'px,' + m[2] + 'px)';
+      });
+      requestAnimationFrame(function(){
+        moved.forEach(function(m){
+          m[0].style.transition = 'transform .55s cubic-bezier(.2,.9,.25,1)';
+          m[0].style.transform = '';
+        });
+      });
+    }
+  }
+
+  /* เอฟเฟกต์ตอนมีโหวตเข้า */
+  if (fx && fx.type === 'vote') {
+    var node = ctx.map[fx.id];
+    if (node) {
+      var bar = node.querySelector(S.orient === 'v' ? '.colfill' : '.rowfill');
+      if (bar) { bar.classList.remove('bump'); void bar.offsetWidth; bar.classList.add('bump'); }
+    }
+  }
+}
+
+function renderStage(fx){
+  document.getElementById('sTitle').textContent = S.title || 'ผลโหวต';
+  document.getElementById('sTotal').textContent = total().toLocaleString('th-TH');
+  paintChart(stageCtx, fx);
+  if (fx && fx.type === 'vote') {
+    var who = byId(fx.id);
+    if (who) showToast(who, fx.n);
+  }
+  renderStagebar();
+}
+
+var toastT = null;
+function showToast(c, n){
+  var el = document.getElementById('toast');
+  el.style.setProperty('--c', colorOf(c));
+  document.getElementById('toastName').textContent = c.name;
+  document.getElementById('toastGroup').textContent = S.groups.length > 1 ? '· ' + groupById(c.gid).name : '';
+  document.getElementById('toastPlus').textContent = (n > 0 ? '+' : '') + n;
+  el.classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(function(){ el.classList.remove('on'); }, 2200);
+}
+
+/* แถบคุมล่างจอ — สร้างใหม่เฉพาะตอนรายชื่อ/สี/ชื่อหมวดเปลี่ยน
+   ระหว่างกดโหวตจะอัปเดตแค่ตัวเลข เลขที่พิมพ์ในช่อง "ครั้งละ" จึงไม่หายและโฟกัสไม่หลุด */
+var sbKey = null;
+function renderStagebar(){
+  var bar = document.getElementById('stagebar');
+  var docked = !IS_DISPLAY;
+
+  bar.className = 'stagebar ' + (docked ? 'dock' : 'float') + (bar.classList.contains('on') && !docked ? ' on' : '');
+  stageEl.classList.toggle('docked', docked);
+
+  var key = (docked ? 'd' : 'f') + '#' + S.groups.map(function(g){
+    return g.id + ':' + g.name + ':' + fixedMembers(g.id).map(function(c){
+      return c.id + ',' + c.name + ',' + colorOf(c);
+    }).join(';');
+  }).join('|');
+
+  if (key !== sbKey) {
+    var html =
+      '<span class="stepbox"><span>ครั้งละ</span>' +
+        '<input id="stepAmt" type="number" min="1" step="1" inputmode="numeric" value="' + stepVal + '" ' +
+               'aria-label="กด + หรือ − ทีนึงให้เปลี่ยนกี่แต้ม"></span>' +
+      '<span class="sbsep"></span>';
+
+    S.groups.forEach(function(g){
+      var mem = fixedMembers(g.id);
+      if (!mem.length) return;
+      if (S.groups.length > 1) {
+        html += '<span class="sbg" style="--g:' + g.hue + '"><span class="d"></span>' + esc(g.name) + '</span>';
+      }
+      mem.forEach(function(c){
+        html += '<span class="pod" style="--c:' + colorOf(c) + '">' +
+          '<button class="pm" data-id="' + c.id + '" data-step="-1" aria-label="ลดแต้ม ' + esc(c.name) + '">−</button>' +
+          '<span class="pi"><span class="pd"></span><span class="pn">' + esc(c.name) + '</span>' +
+            '<span class="pv" data-pv="' + c.id + '">' + c.votes + '</span></span>' +
+          '<button class="pm plus" data-id="' + c.id + '" data-step="1" aria-label="เพิ่มแต้ม ' + esc(c.name) + '">+</button>' +
+        '</span>';
+      });
+    });
+
+    html += '<span class="sbsep"></span>' +
+      '<button class="btn" data-sb="undo">↶ เลิกทำ</button>' +
+      '<button class="btn" data-sb="exit">' + (IS_DISPLAY ? 'ออกจากเต็มจอ' : 'กลับหน้าคุม') + '</button>';
+    bar.innerHTML = html;
+    sbKey = key;
+  }
+
+  /* อัปเดตเฉพาะตัวเลข */
+  S.cands.forEach(function(c){
+    var v = bar.querySelector('[data-pv="' + c.id + '"]');
+    if (v) v.textContent = c.votes;
+  });
+}
+
+/* ═══════════════ วาดทั้งหมด ═══════════════ */
+var stageEl = document.getElementById('stage');
+function stageVisible(){ return IS_DISPLAY || stageEl.classList.contains('on'); }
+
+function render(fx){
+  if (!IS_DISPLAY) { renderControl(); renderSettings(); paintChart(prevCtx, fx); }
+  if (stageVisible()) renderStage(fx);
+  /* ให้เสียงดังจากหน้าต่างที่ถือคะแนนจริง จะได้ไม่ดังซ้อนกันสองหน้าต่าง */
+  if (fx && fx.type === 'vote' && !hasOwner()) blip(fx.n > 0);
+}
+
+/* ═══════════════ ตั้งค่า ═══════════════ */
+function renderSettings(){
+  var ti = document.getElementById('fTitle');
+  if (document.activeElement !== ti) ti.value = S.title;
+
+  [['segOrient','orient'],['segSort','sortBy']].forEach(function(p){
+    var el = document.getElementById(p[0]);
+    Array.prototype.forEach.call(el.children, function(b){ b.classList.toggle('on', b.dataset.v === S[p[1]]); });
+  });
+  document.getElementById('tgCrown').classList.toggle('on', S.crown);
+  document.getElementById('tgSound').classList.toggle('on', S.sound);
+
+  var html = '';
+  S.groups.forEach(function(g){
+    html += '<div class="grow"><span class="gt">' + esc(g.name) + '</span><span class="swatches">';
+    PALETTE.forEach(function(p){
+      html += '<button class="sw-opt' + (p === g.hue ? ' on' : '') + '" style="background:' + p + '" ' +
+              'data-hue="' + p + '" data-for="' + g.id + '" aria-label="ใช้สีนี้กับหมวด ' + esc(g.name) + '"></button>';
+    });
+    html += '</span></div>';
+  });
+  document.getElementById('roster').innerHTML = html;
+}
+
+/* ═══════════════ เหตุการณ์ ═══════════════ */
+
+/* พิมพ์ทับคะแนนบนการ์ด — ตั้งเป็นเลขนั้นเลย ไม่ใช่บวกเพิ่ม */
+function submitScore(el){
+  var id = el.dataset.set, c = byId(id);
+  if (!c) return;
+  var v = el.value.trim();
+  if (v === '' || isNaN(Number(v))) { el.value = c.votes; return; }   /* พิมพ์มั่ว = คืนค่าเดิม */
+  act({ type:'setvotes', id:id, n:Number(v) });
+}
+
+/* ช่อง "ใส่จำนวนเอง" — ใส่เลขติดลบเพื่อหักคะแนนคืนก็ได้ */
+function submitAmount(id){
+  var box = boardEl.querySelector('[data-amt="' + id + '"]');
+  if (!box) return;
+  var n = Math.round(Number(box.value));
+  if (!n || !isFinite(n)) { box.value = ''; box.focus(); return; }
+  box.value = '';
+  act({ type:'vote', id:id, n:Math.max(-9999, Math.min(9999, n)) });
+}
+
+document.addEventListener('click', function(e){
+  var el;
+  if ((el = e.target.closest('[data-step]')))     { act({ type:'vote', id:el.dataset.id, n:Number(el.dataset.step) * stepVal }); return; }
+  if ((el = e.target.closest('[data-go]')))       { submitAmount(el.dataset.go); return; }
+  if ((el = e.target.closest('[data-v][data-n]'))) { act({ type:'vote', id:el.dataset.v, n:Number(el.dataset.n) }); return; }
+  if ((el = e.target.closest('[data-kill]')))      { act({ type:'remove', id:el.dataset.kill }); return; }
+  if ((el = e.target.closest('[data-gadd]')))      { act({ type:'add', gid:el.dataset.gadd }); return; }
+  if ((el = e.target.closest('[data-gkill]')))     { killGroup(el); return; }
+  if ((el = e.target.closest('[data-hue]')))       { act({ type:'recolorgroup', gid:el.dataset.for, hue:el.dataset.hue }); return; }
+  if ((el = e.target.closest('[data-sb]'))) {
+    if (el.dataset.sb === 'undo') act({ type:'undo' });
+    else exitStage();
+    return;
+  }
+  if ((el = e.target.closest('#segOrient button'))) { act({ type:'set', k:'orient', v:el.dataset.v }); return; }
+  if ((el = e.target.closest('#segSort button')))   { act({ type:'set', k:'sortBy', v:el.dataset.v }); return; }
+  if (e.target.closest('#tgCrown')) { act({ type:'set', k:'crown', v:!S.crown }); return; }
+  if (e.target.closest('#tgSound')) { act({ type:'set', k:'sound', v:!S.sound }); if (S.sound) blip(true); return; }
+});
+
+/* ลบหมวดคือลบคนทั้งหมวด — ต้องกดยืนยันอีกครั้ง */
+var killArmed = null, killT = null;
+function killGroup(btn){
+  var gid = btn.dataset.gkill;
+  if (killArmed !== gid) {
+    killArmed = gid;
+    btn.textContent = 'ลบทั้งหมวด?';
+    btn.style.width = 'auto';
+    btn.style.padding = '0 9px';
+    btn.style.color = '#f2a3a3';
+    clearTimeout(killT);
+    killT = setTimeout(function(){ killArmed = null; renderControl(); }, 4000);
+    return;
+  }
+  clearTimeout(killT); killArmed = null;
+  act({ type:'removegroup', gid:gid });
+}
+
+document.addEventListener('input', function(e){
+  var el = e.target.closest('[data-name],[data-gname]');
+  if (!el) return;
+  if (el.dataset.name) {
+    var c = byId(el.dataset.name);
+    if (!c) return;
+    c.name = el.value;
+  } else {
+    var g = groupById(el.dataset.gname);
+    if (!g) return;
+    g.name = el.value;
+  }
+  save(); broadcast(null);
+  renderSettings(); paintChart(prevCtx, null);
+  if (stageVisible()) renderStage(null);
+});
+
+/* ช่องคะแนนกว้างตามเลขที่พิมพ์ + จำค่า "ครั้งละ" ของแถบล่างจอ */
+document.addEventListener('input', function(e){
+  var el = e.target.closest('[data-set]');
+  if (el) { el.style.width = amtWidth(el.value || '0'); return; }
+  if (e.target.id === 'stepAmt') {
+    var n = Math.abs(Math.round(Number(e.target.value)));
+    stepVal = (n && isFinite(n)) ? Math.min(9999, n) : 1;
+  }
+});
+
+/* คลิกออกจากช่องคะแนนแล้วบันทึกให้เลย ไม่ต้องกด Enter ก็ได้ */
+document.addEventListener('change', function(e){
+  var el = e.target.closest('[data-set]');
+  if (el) submitScore(el);
+});
+
+document.getElementById('fTitle').addEventListener('input', function(e){
+  S.title = e.target.value; save(); broadcast(null);
+  if (stageVisible()) renderStage(null);
+});
+
+document.getElementById('btnUndo').addEventListener('click', function(){ act({ type:'undo' }); blip(false); });
+document.getElementById('btnAddGroup').addEventListener('click', function(){ act({ type:'addgroup' }); });
+
+/* รีเซ็ต — กดสองครั้งเพื่อยืนยัน ไม่ต้องมี popup มาขวางระหว่างงาน */
+var resetArmed = false, resetT = null;
+document.getElementById('btnReset').addEventListener('click', function(){
+  var b = this;
+  if (!resetArmed) {
+    resetArmed = true;
+    b.textContent = 'แน่ใจนะ? กดอีกครั้ง';
+    b.classList.add('primary');
+    clearTimeout(resetT);
+    resetT = setTimeout(function(){ resetArmed = false; b.textContent = 'รีเซ็ตคะแนน'; b.classList.remove('primary'); }, 4000);
+    return;
+  }
+  clearTimeout(resetT); resetArmed = false;
+  b.textContent = 'รีเซ็ตคะแนน'; b.classList.remove('primary');
+  act({ type:'reset' });
+});
+
+/* ลิ้นชัก — ลิ้นชักกับตารางผลใช้ฉากหลังอันเดียวกัน จึงต้องเปิดได้ทีละอย่าง */
+function drawer(open){
+  if (open) document.getElementById('sheet').classList.remove('open');
+  document.getElementById('drawer').classList.toggle('open', open);
+  syncScrim();
+}
+function syncScrim(){
+  var any = document.getElementById('drawer').classList.contains('open') ||
+            document.getElementById('sheet').classList.contains('open');
+  document.getElementById('scrim').classList.toggle('open', any);
+}
+document.getElementById('btnCfg').addEventListener('click', function(){ drawer(true); });
+document.getElementById('btnCfgClose').addEventListener('click', function(){ drawer(false); });
+document.getElementById('scrim').addEventListener('click', function(){ drawer(false); sheet(false); });
+
+/* ตารางผล */
+function sheet(open){
+  if (open) document.getElementById('drawer').classList.remove('open');
+  document.getElementById('sheet').classList.toggle('open', open);
+  syncScrim();
+  if (!open) return;
+  var info = allInfo(), html = '';
+  S.groups.forEach(function(g){
+    var gi = info[g.id];
+    if (S.groups.length > 1) {
+      html += '<tr class="gband"><td colspan="4">' + esc(g.name) + ' · ' + gi.total + ' โหวต</td></tr>';
+    }
+    if (!gi.ranked.length) {
+      html += '<tr><td colspan="4" style="color:var(--ink-3)">ยังไม่มีผู้เข้าแข่งขัน</td></tr>';
+    }
+    gi.ranked.forEach(function(c){
+      html += '<tr' + (gi.rank[c.id] === 1 && gi.total > 0 ? ' class="lead"' : '') + '>' +
+        '<td class="n">' + (gi.total > 0 ? gi.rank[c.id] : '–') + '</td>' +
+        '<td>' + esc(c.name) + '</td>' +
+        '<td class="n">' + c.votes + '</td>' +
+        '<td class="n">' + (gi.total === 0 ? '–' : Math.round(c.votes / gi.total * 100) + '%') + '</td></tr>';
+    });
+  });
+  document.getElementById('sheetBody').innerHTML = html;
+  document.getElementById('copybox').hidden = true;
+}
+document.getElementById('btnSheet').addEventListener('click', function(){ sheet(true); });
+document.getElementById('btnSheetClose').addEventListener('click', function(){ sheet(false); });
+
+document.getElementById('btnCopy').addEventListener('click', function(){
+  var info = allInfo();
+  var txt = (S.title || 'ผลโหวต') + '\n';
+  S.groups.forEach(function(g){
+    var gi = info[g.id];
+    txt += '\n[' + g.name + '] รวม ' + gi.total + ' โหวต\n';
+    gi.ranked.forEach(function(c){
+      txt += '  ' + (gi.total > 0 ? gi.rank[c.id] : '-') + '. ' + c.name + ' — ' + c.votes + ' โหวต\n';
+    });
+  });
+  txt += '\nรวมทั้งงาน ' + total() + ' โหวต';
+
+  var box = document.getElementById('copybox'), btn = this;
+  function fallback(){
+    box.hidden = false; box.value = txt; box.focus(); box.select();
+    btn.textContent = 'กด Ctrl+C เพื่อคัดลอก';
+  }
+  try {
+    navigator.clipboard.writeText(txt).then(function(){
+      btn.textContent = 'คัดลอกแล้ว ✓';
+      setTimeout(function(){ btn.textContent = 'คัดลอกผล'; }, 1800);
+    }, fallback);
+  } catch(e){ fallback(); }
+});
+
+/* ═══════════════ โหมดเต็มจอ / หน้าต่างที่สอง ═══════════════ */
+/* requestFullscreen คืนค่าเป็น promise — ถ้าเบราว์เซอร์ไม่อนุญาต (เช่นตอนฝังใน iframe)
+   ต้องดักด้วย .catch ไม่ใช่ try/catch ไม่งั้นจะขึ้น error ค้างไว้ใน console */
+function goFullscreen(){
+  try {
+    var el = document.documentElement;
+    if (el.requestFullscreen) { var p = el.requestFullscreen(); if (p && p.catch) p.catch(function(){}); }
+  } catch(e){}
+}
+function leaveFullscreen(){
+  try {
+    if (document.fullscreenElement && document.exitFullscreen) {
+      var p = document.exitFullscreen(); if (p && p.catch) p.catch(function(){});
+    }
+  } catch(e){}
+}
+function toggleFullscreen(){ document.fullscreenElement ? leaveFullscreen() : goFullscreen(); }
+
+function enterStage(){
+  stageEl.classList.add('on');
+  document.getElementById('dock').style.display = 'none';
+  drawer(false); sheet(false);
+  goFullscreen();
+  renderStage(null);
+  peekBar();
+}
+function exitStage(){
+  if (IS_DISPLAY) { leaveFullscreen(); return; }
+  stageEl.classList.remove('on');
+  document.getElementById('dock').style.display = '';
+  leaveFullscreen();
+}
+document.getElementById('btnFull').addEventListener('click', enterStage);
+
+document.getElementById('btnOpen').addEventListener('click', function(){
+  var url = location.href.split('#')[0] + '#display';
+  var w = null;
+  try { w = window.open(url, WNAME, 'width=1280,height=760'); } catch(e){}
+  if (!w) {
+    document.getElementById('linkText').textContent = 'เบราว์เซอร์บล็อกป๊อปอัป — ใช้ “โหมดเต็มจอ” แทน';
+    return;
+  }
+  displayWin = w;
+  try { w.focus(); } catch(e){}
+  var tries = 0;
+  var iv = setInterval(function(){ broadcast(null); if (++tries > 12) clearInterval(iv); }, 250);
+});
+
+/* สถานะการเชื่อมต่อ */
+setInterval(function(){
+  if (IS_DISPLAY) return;
+  var open = false;
+  try { open = !!(displayWin && !displayWin.closed); } catch(e){}
+  document.getElementById('linkPill').classList.toggle('on', open);
+  var txt = document.getElementById('linkText');
+  if (open || txt.textContent.indexOf('บล็อก') < 0)
+    txt.textContent = open ? 'จอแสดงผล: เชื่อมต่อแล้ว' : 'จอแสดงผล: ยังไม่เปิด';
+}, 1000);
+
+/* เฉพาะหน้าต่างที่สอง (จอผู้ชม) เท่านั้นที่ซ่อนแถบปุ่ม — โผล่เมื่อขยับเมาส์
+   ส่วนโหมดคุมจากหน้าต่างเดียว แถบจะปักอยู่ล่างจอตลอด ไม่ซ่อน ไม่ทับกราฟ */
+var peekT = null;
+function peekBar(){
+  if (!IS_DISPLAY) return;
+  var bar = document.getElementById('stagebar');
+  bar.classList.add('on');
+  clearTimeout(peekT);
+  peekT = setTimeout(function(){ bar.classList.remove('on'); }, 3000);
+}
+document.addEventListener('mousemove', function(){ if (IS_DISPLAY && stageVisible()) peekBar(); });
+document.getElementById('stagebar').addEventListener('mouseenter', function(){ clearTimeout(peekT); });
+document.getElementById('stagebar').addEventListener('mouseleave', peekBar);
+
+/* ═══════════════ คีย์บอร์ด ═══════════════ */
+/* ใช้ e.code เป็นหลัก เพราะถ้าสลับแป้นเป็นภาษาไทย e.key จะกลายเป็น ๅ/ผ/ด
+   แต่ e.code ยังเป็น Digit1 / KeyZ / KeyF เหมือนเดิม ปุ่มลัดจึงใช้ได้ทั้งสองภาษา */
+document.addEventListener('keydown', function(e){
+  var tag = (e.target.tagName || '').toLowerCase();
+  var key = (e.key || '').toLowerCase();
+  var code = e.code || '';
+
+  if (tag === 'input' || tag === 'textarea') {
+    var f = e.target, ds = f.dataset || {};
+    if (key === 'escape') {
+      if (ds.set) { var back0 = byId(ds.set); if (back0) f.value = back0.votes; }   /* ยกเลิกการแก้ */
+      f.blur();
+    }
+    else if (key === 'enter') {
+      if (ds.amt)      { e.preventDefault(); submitAmount(ds.amt); }
+      else if (ds.set) { e.preventDefault(); submitScore(f); }
+      else f.blur();
+    }
+    return;
+  }
+  if ((e.ctrlKey || e.metaKey) && (code === 'KeyZ' || key === 'z')) {
+    e.preventDefault(); act({ type:'undo' }); blip(false); return;
+  }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+  if (key === 'escape') { exitStage(); drawer(false); sheet(false); return; }
+
+  if (code === 'KeyF' || key === 'f') {
+    if (IS_DISPLAY) toggleFullscreen();
+    else if (stageVisible()) exitStage();
+    else enterStage();
+    return;
+  }
+
+  var d = code.indexOf('Digit') === 0 ? Number(code.slice(5)) : Number(e.key);
+  if (d >= 1 && d <= 9) {
+    var flat = flatFixed();
+    if (flat[d-1]) {
+      e.preventDefault();
+      act({ type:'vote', id:flat[d-1].id, n: e.shiftKey ? 5 : 1 });
+    }
+  }
+});
+
+/* ═══════════════ เริ่มทำงาน ═══════════════ */
+S = load();
+
+if (IS_DISPLAY) {
+  document.getElementById('control').style.display = 'none';
+  document.getElementById('dock').style.display = 'none';
+  stageEl.classList.add('on');
+  document.title = (S.title || 'ผลโหวต') + ' — จอแสดงผล';
+  try { if (window.opener) post(window.opener, { vc:2, type:'hello' }); } catch(e){}
+  try { if (bc) bc.postMessage({ vc:2, type:'hello' }); } catch(e){}
+}
+
+render(null);
+window.addEventListener('resize', function(){ if (stageVisible()) renderStage(null); });
+})();
+</script>
+
+</body>
+</html>
