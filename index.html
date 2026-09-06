@@ -25,7 +25,7 @@
   --ink-2:#98a2ba;
   --ink-3:#6b7590;
 
-  /* --- ทองสงวนไว้สำหรับ "อันดับ 1 ของหมวด" เท่านั้น ไม่ใช่สีตกแต่ง --- */
+  /* --- ทองสงวนไว้สำหรับ "ที่ 1 ของทั้งงาน" เท่านั้น ไม่ใช่สีตกแต่ง --- */
   --gold:#f5b544;
 
   --r:14px;
@@ -255,10 +255,15 @@ tr.lead td{color:var(--gold)}
 }
 .stage.on{display:flex}
 .shead{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;padding-bottom:clamp(12px,1.6vw,22px)}
+/* ชื่องานคลิกพิมพ์ทับได้เลย ไม่ต้องเข้าไปหาในหน้าตั้งค่า */
 .shead h1{
   margin:0;font-family:var(--f-display);font-weight:700;
   font-size:clamp(22px,3vw,52px);line-height:1.15;letter-spacing:.005em;text-wrap:balance;
+  outline:none;cursor:text;border-bottom:2px dashed transparent;border-radius:4px;
+  padding:0 6px 2px;margin-left:-6px;
 }
+.shead h1:hover{border-bottom-color:var(--line-2)}
+.shead h1:focus{border-bottom-color:var(--gold);background:var(--panel)}
 .shead .spacer{flex:1}
 .stotal{text-align:right;line-height:1.1}
 .stotal .k{font-size:clamp(11px,1vw,17px);letter-spacing:.12em;color:var(--ink-2);font-weight:600}
@@ -266,27 +271,23 @@ tr.lead td{color:var(--gold)}
 .livedot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#199e70;margin-right:9px;vertical-align:middle;animation:breathe 2.4s ease-in-out infinite}
 @keyframes breathe{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(25,158,112,.5)}50%{opacity:.55;box-shadow:0 0 0 7px rgba(25,158,112,0)}}
 
-.chart{flex:1;min-height:0;display:flex}
+.chart{flex:1;min-height:0;display:flex;transition:padding-bottom .26s cubic-bezier(.2,.9,.25,1)}
+/* ตอนแถบลอยโผล่ขึ้นมา ให้กราฟหดหลบขึ้นไปเท่าความสูงแถบ จะได้ไม่มีอะไรถูกบัง */
+.stage.peeking .chart{padding-bottom:var(--barh,0px)}
 
-/* ป้ายหมวด — คั่นกลุ่มด้วยเส้นบางๆ ไม่ใช่กล่องสี */
-.grpcap{
-  display:flex;align-items:center;justify-content:center;gap:.5em;
-  font-size:clamp(11px,1.05vw,20px);font-weight:600;color:var(--ink-2);
-  white-space:nowrap;overflow:hidden;
+/* ป้ายบอกว่าสีไหนคือหมวดไหน — แท่งไม่ได้แยกกลุ่มแล้ว สีจึงต้องมีคำอธิบาย */
+.legend{display:flex;align-items:center;gap:clamp(10px,1.3vw,24px);flex-wrap:wrap;padding-bottom:.3em}
+.legend:empty{display:none}
+.lgi{
+  display:inline-flex;align-items:center;gap:.5em;white-space:nowrap;
+  font-size:clamp(11px,1vw,18px);font-weight:600;color:var(--ink-2);
 }
-.grpdot{width:.75em;height:.75em;border-radius:3px;background:var(--g);flex:none}
-.grpsum{color:var(--ink-3);font-variant-numeric:tabular-nums;font-weight:500}
-.chart.solo .grpcap{display:none}   /* มีหมวดเดียว ไม่ต้องมีป้าย */
+.lgi .d{width:.8em;height:.8em;border-radius:3px;background:var(--g);flex:none}
+.lgi .s{color:var(--ink-3);font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums}
 
 /* --- แนวตั้ง --- */
-.chart.v{gap:clamp(16px,2.4vw,50px);align-items:stretch}
-.chart.v>.grp{flex:var(--m) 1 0;min-width:0;display:flex;flex-direction:column}
-.grpbars{flex:1;min-height:0;display:flex;gap:clamp(6px,.8vw,16px)}
-.grpbars>.col{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
-.chart.v .grpcap{
-  margin-top:clamp(7px,.8vw,14px);padding-top:clamp(7px,.8vw,14px);
-  border-top:1px solid var(--line);
-}
+.chart.v{gap:clamp(8px,1vw,20px);align-items:stretch}
+.chart.v>.col{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
 .coltrack{
   flex:1;min-height:0;display:flex;align-items:flex-end;justify-content:center;
   padding-top:clamp(34px,3.6vw,72px);
@@ -319,13 +320,8 @@ tr.lead td{color:var(--gold)}
 }
 
 /* --- แนวนอน --- */
-.chart.h{flex-direction:column;gap:clamp(12px,2.2vh,34px);justify-content:center}
-.chart.h>.grp{display:flex;flex-direction:column;gap:clamp(5px,.7vh,12px);flex:0 1 auto}
-.grprows{display:flex;flex-direction:column;gap:clamp(6px,calc(13vh / var(--n)),24px)}
-.chart.h .grpcap{
-  border-bottom:1px solid var(--line);justify-content:flex-start;
-  padding:0 0 clamp(4px,.5vh,9px);
-}
+.chart.h{flex-direction:column;gap:clamp(6px,calc(13vh / var(--n)),24px);justify-content:center}
+.chart.h>.row{flex:0 1 auto}
 .row{min-height:0;display:flex;align-items:center;gap:clamp(10px,1.1vw,20px)}
 .rowhead{width:clamp(120px,17vw,290px);flex:none;display:flex;align-items:center;gap:9px;min-width:0}
 .rowname{
@@ -348,10 +344,7 @@ tr.lead td{color:var(--gold)}
 
 /* --- กราฟย่อบนหน้าคุม (ตัวอย่างจอ) ใช้ขนาดคงที่ ไม่อิง vw/vh --- */
 .preview{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;height:300px;display:flex}
-.chart.mini{gap:16px}
-.chart.mini .grpbars{gap:5px}
-.chart.mini .grpcap{font-size:11.5px;gap:.45em}
-.chart.mini.v .grpcap{margin-top:8px;padding-top:8px}
+.chart.mini.v{gap:7px}
 .chart.mini .coltrack{padding-top:24px}
 .chart.mini .colfill{width:min(78%,54px)}
 .chart.mini .colval{font-size:16px;margin-bottom:6px}
@@ -359,8 +352,7 @@ tr.lead td{color:var(--gold)}
 .chart.mini .colname{font-size:12px}
 .chart.mini .crown{font-size:13px}
 .chart.mini .rank{font-size:10px;height:18px;min-width:20px;padding:0 6px}
-.chart.mini.h{gap:12px}
-.chart.mini .grprows{gap:6px}
+.chart.mini.h{gap:6px}
 .chart.mini .rowhead{width:130px;gap:7px}
 .chart.mini .rowname{font-size:12.5px}
 .chart.mini .rowtrack{height:20px}
@@ -390,10 +382,12 @@ tr.lead td{color:var(--gold)}
   padding:10px 12px;border-radius:15px;
   background:var(--panel);border:1px solid var(--line-2);
 }
-/* แบบลอยและซ่อนเอง — ใช้ตอนเปิดเป็นหน้าต่างที่สองบนจอผู้ชม จะได้ไม่มีปุ่มไปกวนคนดู */
+/* แบบลอยและซ่อนเอง — ใช้ตอนเปิดเป็นหน้าต่างที่สองบนจอผู้ชม จะได้ไม่มีปุ่มไปกวนคนดู
+   width:max-content สำคัญมาก ไม่งั้นกล่องจะหดแคบแล้วปุ่มตกบรรทัดเป็นกองใหญ่ */
 .stagebar.float{
   position:absolute;left:50%;bottom:16px;transform:translate(-50%,calc(100% + 26px));
-  max-width:calc(100% - 32px);background:rgba(17,20,28,.94);box-shadow:0 14px 40px rgba(0,0,0,.6);
+  width:max-content;max-width:calc(100% - 32px);
+  background:rgba(17,20,28,.94);box-shadow:0 14px 40px rgba(0,0,0,.6);
   transition:transform .26s cubic-bezier(.2,.9,.25,1),opacity .2s;opacity:0;
 }
 .stagebar.float.on{transform:translate(-50%,0);opacity:1}
@@ -456,7 +450,7 @@ tr.lead td{color:var(--gold)}
       <div class="v"><span class="num" id="stTotal">0</span><small id="stCount">0 ผู้เข้าแข่งขัน</small></div>
     </div>
     <div class="stat">
-      <div class="k">ผู้นำแต่ละหมวด</div>
+      <div class="k">3 อันดับแรก (รวมทุกหมวด)</div>
       <div class="leads" id="stLead"></div>
     </div>
   </div>
@@ -514,7 +508,7 @@ tr.lead td{color:var(--gold)}
     </div>
     <div class="field">
       <label>ตัวเลือก</label>
-      <div class="toggle" id="tgCrown"><span>ติดมงกุฎให้ที่ 1 ของแต่ละหมวด</span><span class="sw"></span></div>
+      <div class="toggle" id="tgCrown"><span>ติดมงกุฎให้ที่ 1 ของทั้งงาน</span><span class="sw"></span></div>
       <div class="toggle" id="tgSound"><span>เสียงตอบรับตอนกดโหวต</span><span class="sw"></span></div>
     </div>
     <div class="field">
@@ -535,7 +529,7 @@ tr.lead td{color:var(--gold)}
 <div class="sheet" id="sheet" role="dialog" aria-label="ตารางผลโหวต">
   <h2>ผลโหวต</h2>
   <table>
-    <thead><tr><th style="width:56px">อันดับ</th><th>ผู้เข้าแข่งขัน</th><th class="n">โหวต</th><th class="n" style="width:82px">ในหมวด</th></tr></thead>
+    <thead><tr><th style="width:56px">อันดับ</th><th>ผู้เข้าแข่งขัน</th><th style="width:110px">หมวด</th><th class="n">โหวต</th><th class="n" style="width:72px">สัดส่วน</th></tr></thead>
     <tbody id="sheetBody"></tbody>
   </table>
   <div class="acts">
@@ -548,7 +542,8 @@ tr.lead td{color:var(--gold)}
 <!-- ═══════════════ จอแสดงผล ═══════════════ -->
 <section class="stage" id="stage" aria-label="จอแสดงผลโหวต">
   <header class="shead">
-    <h1 id="sTitle">ประกวดดาว–เดือน</h1>
+    <h1 id="sTitle" contenteditable="true" spellcheck="false" title="คลิกเพื่อแก้ชื่องาน">ประกวดดาว–เดือน</h1>
+    <div class="legend" id="legend"></div>
     <div class="spacer"></div>
     <div class="stotal">
       <div class="k"><span class="livedot"></span>โหวตทั้งหมด</div>
@@ -805,10 +800,10 @@ function flatFixed(){
   return out;
 }
 
-/* อันดับ/ผู้นำ คิดแยกในแต่ละหมวด เพราะแต่ละหมวดมีผู้ชนะของตัวเอง */
-function infoOf(gid){
-  var arr = [];
-  S.cands.forEach(function(c, i){ if (c.gid === gid) arr.push({ c:c, i:i }); });
+/* อันดับนับรวมทุกหมวดเป็นกองเดียว — มีที่ 1 ทีมเดียวทั้งงาน เพราะรางวัลมีชุดเดียว
+   หมวดเหลือหน้าที่แค่กำหนดสีของแท่ง ไม่ได้แยกการแข่งขัน */
+function overall(){
+  var arr = S.cands.map(function(c, i){ return { c:c, i:i }; });
   arr.sort(function(a,b){ return b.c.votes - a.c.votes || a.i - b.i; });
   var ranked = arr.map(function(x){ return x.c; });
   var rank = {}, lead = {}, tot = 0, prev = null, rk = 0;
@@ -822,10 +817,10 @@ function infoOf(gid){
   }
   return { ranked:ranked, rank:rank, lead:lead, total:tot };
 }
-function allInfo(){
-  var m = {};
-  S.groups.forEach(function(g){ m[g.id] = infoOf(g.id); });
-  return m;
+function groupTotal(gid){
+  var t = 0;
+  S.cands.forEach(function(c){ if (c.gid === gid) t += c.votes; });
+  return t;
 }
 /* แกนเดียวทั้งกราฟ — เทียบข้ามหมวดได้ตรงๆ */
 function scaleMax(){
@@ -863,22 +858,26 @@ var boardEl = document.getElementById('board');
 function amtWidth(s){ return 'calc(' + Math.max(2, String(s).length) + 'ch + 14px)'; }
 
 function renderControl(){
-  var t = total(), info = allInfo(), max = scaleMax(), flat = flatFixed();
+  var info = overall(), t = info.total, max = scaleMax(), flat = flatFixed();
   killArmed = null;   /* วาดใหม่แล้วปุ่มลบหมวดกลับเป็นปกติ ต้องกดยืนยันใหม่เสมอ */
 
   document.getElementById('stTotal').textContent = t.toLocaleString('th-TH');
   document.getElementById('stCount').textContent = S.cands.length + ' คน · ' + S.groups.length + ' หมวด';
 
+  /* ที่ 1 มีคนเดียวทั้งงาน — โชว์ 3 อันดับแรกไว้ให้เห็นว่าใครไล่มาติดๆ */
   var lh = '';
-  S.groups.forEach(function(g){
-    var gi = info[g.id], top = gi.ranked[0];
-    lh += '<div class="leadrow">' +
-      '<span class="sq" style="--c:' + g.hue + '"></span>' +
-      '<span class="g">' + esc(g.name) + '</span>' +
-      '<span class="who">' + (top && gi.total > 0 ? esc(top.name) : 'ยังไม่มีโหวต') + '</span>' +
-      (top && gi.total > 0 ? '<span class="n">' + top.votes + '</span>' : '') +
-      '</div>';
-  });
+  if (t === 0) {
+    lh = '<div class="leadrow"><span class="who" style="color:var(--ink-3)">ยังไม่มีโหวต</span></div>';
+  } else {
+    info.ranked.slice(0, 3).forEach(function(c){
+      lh += '<div class="leadrow">' +
+        '<span class="sq" style="--c:' + colorOf(c) + '"></span>' +
+        '<span class="g">ที่ ' + info.rank[c.id] + '</span>' +
+        '<span class="who">' + esc(c.name) + '</span>' +
+        '<span class="n">' + c.votes + '</span>' +
+        '</div>';
+    });
+  }
   document.getElementById('stLead').innerHTML = lh;
 
   document.getElementById('undoN').textContent = undoStack.length ? '(' + undoStack.length + ')' : '';
@@ -887,12 +886,12 @@ function renderControl(){
 
   var html = '';
   S.groups.forEach(function(g){
-    var mem = fixedMembers(g.id), gi = info[g.id];
+    var mem = fixedMembers(g.id);
     html += '<section class="gsec">' +
       '<div class="ghead">' +
         '<span class="gswatch" style="--g:' + g.hue + '"></span>' +
         '<input class="gname" data-gname="' + g.id + '" value="' + esc(g.name) + '" aria-label="ชื่อหมวด" size="' + Math.max(6, g.name.length) + '">' +
-        '<span class="gsum">' + gi.total + ' โหวต · ' + mem.length + ' คน</span>' +
+        '<span class="gsum">' + groupTotal(g.id) + ' โหวต · ' + mem.length + ' คน</span>' +
         '<div class="spacer"></div>' +
         (S.cands.length < MAXC ? '<button class="btn tiny" data-gadd="' + g.id + '">+ เพิ่มผู้เข้าแข่ง</button>' : '') +
         (S.groups.length > 1 ? '<button class="kill" data-gkill="' + g.id + '" title="ลบหมวดนี้ทั้งหมวด" aria-label="ลบหมวด ' + esc(g.name) + '">✕</button>' : '') +
@@ -904,9 +903,9 @@ function renderControl(){
     mem.forEach(function(c){
       var idx = flat.indexOf(c);
       var col = colorOf(c);
-      var pct = gi.total === 0 ? 0 : Math.round(c.votes / gi.total * 100);
+      var pct = t === 0 ? 0 : Math.round(c.votes / t * 100);
       html +=
-        '<div class="card' + (gi.lead[c.id] ? ' lead' : '') + '" style="--c:' + col + '">' +
+        '<div class="card' + (info.lead[c.id] ? ' lead' : '') + '" style="--c:' + col + '">' +
           '<div class="crow">' +
             '<span class="keycap">' + (idx >= 0 && idx < 9 ? (idx+1) : '·') + '</span>' +
             '<span class="swatch"></span>' +
@@ -917,7 +916,7 @@ function renderControl(){
             '<input class="n" data-set="' + c.id + '" value="' + c.votes + '" inputmode="numeric" ' +
                    'style="width:' + amtWidth(String(c.votes)) + '" ' +
                    'aria-label="คะแนนของ ' + esc(c.name) + ' แก้ได้โดยพิมพ์ทับ" title="พิมพ์ทับเพื่อแก้คะแนนเป็นเลขนี้เลย">' +
-            '<span class="share">' + (gi.total === 0 ? 'ยังไม่มีโหวต' : pct + '% ในหมวด · ที่ ' + gi.rank[c.id]) + '</span></div>' +
+            '<span class="share">' + (t === 0 ? 'ยังไม่มีโหวต' : pct + '% · ที่ ' + info.rank[c.id] + ' ของทั้งงาน') + '</span></div>' +
           '<div class="track"><i style="width:' + (c.votes / max * 100) + '%"></i></div>' +
           '<div class="ops">' +
             '<button class="op" data-v="' + c.id + '" data-n="-1" title="ลบ 1 โหวต">−</button>' +
@@ -983,61 +982,36 @@ function makeCtx(el, mini){ return { el:el, mini:!!mini, map:{}, key:null }; }
 var stageCtx = makeCtx(document.getElementById('chart'), false);
 var prevCtx  = makeCtx(document.getElementById('preview'), true);
 
-function shownGroups(info){
-  return S.groups.filter(function(g){ return info[g.id].ranked.length > 0; });
-}
-
 function paintChart(ctx, fx){
-  var info = allInfo(), max = scaleMax(), t = total();
-  var groups = shownGroups(info);
+  var info = overall(), max = scaleMax(), t = info.total;
 
   ctx.el.style.setProperty('--n', String(Math.max(S.cands.length, 1)));
 
-  /* สร้าง DOM ใหม่เมื่อโครงหมวด/สมาชิก/รูปแบบกราฟเปลี่ยน (สลับอันดับเฉยๆ ไม่ต้องสร้างใหม่) */
-  var key = S.orient + '#' + groups.map(function(g){
-    return g.id + ':' + fixedMembers(g.id).map(function(c){ return c.id; }).join(',');
-  }).join('|');
+  /* กราฟเป็นกองเดียว ไม่แยกกล่องตามหมวดแล้ว — สีของแท่งบอกหมวดแทน
+     สร้าง DOM ใหม่เมื่อรายชื่อหรือรูปแบบกราฟเปลี่ยน (สลับอันดับเฉยๆ ไม่ต้องสร้างใหม่) */
+  var all = flatFixed();
+  var key = S.orient + '#' + all.map(function(c){ return c.id; }).join(',');
 
   if (ctx.key !== key) {
-    ctx.el.className = 'chart ' + S.orient + (ctx.mini ? ' mini' : '') + (groups.length <= 1 ? ' solo' : '');
+    ctx.el.className = 'chart ' + S.orient + (ctx.mini ? ' mini' : '');
     ctx.el.innerHTML = '';
     ctx.map = {};
-    groups.forEach(function(g){
-      var mem = fixedMembers(g.id);
-      var gEl = document.createElement('div');
-      gEl.className = 'grp';
-      gEl.style.setProperty('--m', String(mem.length));
-      gEl.style.setProperty('--g', g.hue);
-
-      var bars = document.createElement('div');
-      bars.className = S.orient === 'v' ? 'grpbars' : 'grprows';
-      var cap = document.createElement('div');
-      cap.className = 'grpcap';
-      cap.innerHTML = '<span class="grpdot"></span><span class="grpname"></span><span class="grpsum"></span>';
-
-      mem.forEach(function(c){
-        var el = document.createElement('div');
-        if (S.orient === 'v') {
-          el.className = 'col';
-          el.innerHTML =
-            '<div class="coltrack"><div class="colfill"><span class="colval num">0</span></div></div>' +
-            '<div class="colfoot"><span class="crown"></span><span class="rank"></span><span class="colname"></span></div>';
-        } else {
-          el.className = 'row';
-          el.innerHTML =
-            '<div class="rowhead"><span class="crown"></span><span class="rank"></span><span class="rowname"></span></div>' +
-            '<div class="rowtrack"><div class="rowfill"></div></div>' +
-            '<div class="rowval num">0</div>';
-        }
-        bars.appendChild(el);
-        ctx.map[c.id] = el;
-      });
-
-      /* แนวตั้ง: ป้ายหมวดอยู่ใต้แท่ง / แนวนอน: อยู่เหนือแถว */
-      if (S.orient === 'v') { gEl.appendChild(bars); gEl.appendChild(cap); }
-      else                  { gEl.appendChild(cap); gEl.appendChild(bars); }
-      gEl.dataset.gid = g.id;
-      ctx.el.appendChild(gEl);
+    all.forEach(function(c){
+      var el = document.createElement('div');
+      if (S.orient === 'v') {
+        el.className = 'col';
+        el.innerHTML =
+          '<div class="coltrack"><div class="colfill"><span class="colval num">0</span></div></div>' +
+          '<div class="colfoot"><span class="crown"></span><span class="rank"></span><span class="colname"></span></div>';
+      } else {
+        el.className = 'row';
+        el.innerHTML =
+          '<div class="rowhead"><span class="crown"></span><span class="rank"></span><span class="rowname"></span></div>' +
+          '<div class="rowtrack"><div class="rowfill"></div></div>' +
+          '<div class="rowval num">0</div>';
+      }
+      ctx.el.appendChild(el);
+      ctx.map[c.id] = el;
     });
     ctx.key = key;
   }
@@ -1048,38 +1022,30 @@ function paintChart(ctx, fx){
     for (id in ctx.map) before[id] = ctx.map[id].getBoundingClientRect();
   }
 
-  groups.forEach(function(g){
-    var gi = info[g.id];
-    var gEl = ctx.el.querySelector('.grp[data-gid="' + g.id + '"]');
-    if (gEl) {
-      gEl.querySelector('.grpname').textContent = g.name;
-      gEl.querySelector('.grpsum').textContent = gi.total > 0 ? gi.total.toLocaleString('th-TH') : '';
+  var order = S.sortBy === 'votes' ? info.ranked : all;
+  order.forEach(function(c, idx){
+    var el = ctx.map[c.id];
+    if (!el) return;
+    el.style.order = idx;
+    el.style.setProperty('--c', colorOf(c));
+    el.classList.toggle('lead', !!info.lead[c.id]);
+
+    el.querySelector('.crown').textContent = (S.crown && info.lead[c.id] && t > 0) ? '👑' : '';
+    el.querySelector('.rank').textContent  = t > 0 ? '#' + info.rank[c.id] : '–';
+
+    /* เว้นหัวไว้ 12% ไม่ให้แท่งที่ 1 ชนขอบบน — ความยาวแท่งยังแปรตามคะแนนตรงๆ เหมือนเดิม */
+    var pct = (c.votes / max) * 88;
+    el.title = c.name + ' (' + groupById(c.gid).name + ') — ' + c.votes + ' โหวต' +
+               (t > 0 ? ' · ' + Math.round(c.votes / t * 100) + '% ของทั้งหมด' : '');
+    if (S.orient === 'v') {
+      el.querySelector('.colfill').style.height = pct + '%';
+      el.querySelector('.colval').textContent = c.votes;
+      el.querySelector('.colname').textContent = c.name;
+    } else {
+      el.querySelector('.rowfill').style.width = pct + '%';
+      el.querySelector('.rowval').textContent = c.votes;
+      el.querySelector('.rowname').textContent = c.name;
     }
-    var order = S.sortBy === 'votes' ? gi.ranked : fixedMembers(g.id);
-    order.forEach(function(c, idx){
-      var el = ctx.map[c.id];
-      if (!el) return;
-      el.style.order = idx;
-      el.style.setProperty('--c', colorOf(c));
-      el.classList.toggle('lead', !!gi.lead[c.id]);
-
-      el.querySelector('.crown').textContent = (S.crown && gi.lead[c.id] && gi.total > 0) ? '👑' : '';
-      el.querySelector('.rank').textContent  = gi.total > 0 ? '#' + gi.rank[c.id] : '–';
-
-      /* เว้นหัวไว้ 12% ไม่ให้แท่งที่ 1 ชนขอบบน — ความยาวแท่งยังแปรตามคะแนนตรงๆ เหมือนเดิม */
-      var pct = (c.votes / max) * 88;
-      el.title = g.name + ' — ' + c.name + ' — ' + c.votes + ' โหวต' +
-                 (gi.total > 0 ? ' (' + Math.round(c.votes / gi.total * 100) + '% ในหมวด)' : '');
-      if (S.orient === 'v') {
-        el.querySelector('.colfill').style.height = pct + '%';
-        el.querySelector('.colval').textContent = c.votes;
-        el.querySelector('.colname').textContent = c.name;
-      } else {
-        el.querySelector('.rowfill').style.width = pct + '%';
-        el.querySelector('.rowval').textContent = c.votes;
-        el.querySelector('.rowname').textContent = c.name;
-      }
-    });
   });
 
   /* FLIP: เลื่อนกลับไปที่เดิมแล้วปล่อยให้ไหลไปตำแหน่งใหม่ */
@@ -1116,8 +1082,22 @@ function paintChart(ctx, fx){
 }
 
 function renderStage(fx){
-  document.getElementById('sTitle').textContent = S.title || 'ผลโหวต';
+  /* กำลังพิมพ์ชื่ออยู่ อย่าเขียนทับ ไม่งั้นเคอร์เซอร์เด้ง */
+  var st = document.getElementById('sTitle');
+  if (document.activeElement !== st) st.textContent = S.title || 'ผลโหวต';
   document.getElementById('sTotal').textContent = total().toLocaleString('th-TH');
+
+  /* ป้ายบอกสีของแต่ละหมวด — จำเป็นเพราะแท่งไม่ได้แยกกลุ่มให้ดูแล้ว */
+  var lg = '';
+  if (S.groups.length > 1) {
+    S.groups.forEach(function(g){
+      if (!fixedMembers(g.id).length) return;
+      lg += '<span class="lgi" style="--g:' + g.hue + '"><span class="d"></span>' + esc(g.name) +
+            '<span class="s">' + groupTotal(g.id).toLocaleString('th-TH') + '</span></span>';
+    });
+  }
+  document.getElementById('legend').innerHTML = lg;
+
   paintChart(stageCtx, fx);
   if (fx && fx.type === 'vote') {
     var who = byId(fx.id);
@@ -1318,6 +1298,17 @@ document.addEventListener('change', function(e){
   if (el) submitScore(el);
 });
 
+/* แก้ชื่องานจากบนจอได้เลย — ผ่าน act() เพื่อให้แก้จากหน้าต่างไหนก็ถูกต้อง */
+var sTitleEl = document.getElementById('sTitle');
+sTitleEl.addEventListener('input', function(){
+  act({ type:'set', k:'title', v:sTitleEl.textContent });
+});
+sTitleEl.addEventListener('paste', function(e){
+  e.preventDefault();   /* กันการวางข้อความที่ติดฟอนต์/สีมาด้วย */
+  var txt = (e.clipboardData || window.clipboardData).getData('text').replace(/\s+/g, ' ');
+  document.execCommand('insertText', false, txt);
+});
+
 document.getElementById('fTitle').addEventListener('input', function(e){
   S.title = e.target.value; save(); broadcast(null);
   if (stageVisible()) renderStage(null);
@@ -1364,22 +1355,15 @@ function sheet(open){
   document.getElementById('sheet').classList.toggle('open', open);
   syncScrim();
   if (!open) return;
-  var info = allInfo(), html = '';
-  S.groups.forEach(function(g){
-    var gi = info[g.id];
-    if (S.groups.length > 1) {
-      html += '<tr class="gband"><td colspan="4">' + esc(g.name) + ' · ' + gi.total + ' โหวต</td></tr>';
-    }
-    if (!gi.ranked.length) {
-      html += '<tr><td colspan="4" style="color:var(--ink-3)">ยังไม่มีผู้เข้าแข่งขัน</td></tr>';
-    }
-    gi.ranked.forEach(function(c){
-      html += '<tr' + (gi.rank[c.id] === 1 && gi.total > 0 ? ' class="lead"' : '') + '>' +
-        '<td class="n">' + (gi.total > 0 ? gi.rank[c.id] : '–') + '</td>' +
-        '<td>' + esc(c.name) + '</td>' +
-        '<td class="n">' + c.votes + '</td>' +
-        '<td class="n">' + (gi.total === 0 ? '–' : Math.round(c.votes / gi.total * 100) + '%') + '</td></tr>';
-    });
+  /* เรียงรวมทุกหมวดเป็นตารางเดียว มีคอลัมน์บอกว่าใครอยู่หมวดไหน */
+  var info = overall(), t = info.total, html = '';
+  info.ranked.forEach(function(c){
+    html += '<tr' + (info.rank[c.id] === 1 && t > 0 ? ' class="lead"' : '') + '>' +
+      '<td class="n">' + (t > 0 ? info.rank[c.id] : '–') + '</td>' +
+      '<td>' + esc(c.name) + '</td>' +
+      '<td class="g">' + esc(groupById(c.gid).name) + '</td>' +
+      '<td class="n">' + c.votes + '</td>' +
+      '<td class="n">' + (t === 0 ? '–' : Math.round(c.votes / t * 100) + '%') + '</td></tr>';
   });
   document.getElementById('sheetBody').innerHTML = html;
   document.getElementById('copybox').hidden = true;
@@ -1388,16 +1372,17 @@ document.getElementById('btnSheet').addEventListener('click', function(){ sheet(
 document.getElementById('btnSheetClose').addEventListener('click', function(){ sheet(false); });
 
 document.getElementById('btnCopy').addEventListener('click', function(){
-  var info = allInfo();
-  var txt = (S.title || 'ผลโหวต') + '\n';
-  S.groups.forEach(function(g){
-    var gi = info[g.id];
-    txt += '\n[' + g.name + '] รวม ' + gi.total + ' โหวต\n';
-    gi.ranked.forEach(function(c){
-      txt += '  ' + (gi.total > 0 ? gi.rank[c.id] : '-') + '. ' + c.name + ' — ' + c.votes + ' โหวต\n';
-    });
+  var info = overall(), t = info.total;
+  var txt = (S.title || 'ผลโหวต') + '\n\n';
+  info.ranked.forEach(function(c){
+    txt += (t > 0 ? info.rank[c.id] : '-') + '. ' + c.name +
+           (S.groups.length > 1 ? ' (' + groupById(c.gid).name + ')' : '') +
+           ' — ' + c.votes + ' โหวต\n';
   });
-  txt += '\nรวมทั้งงาน ' + total() + ' โหวต';
+  if (S.groups.length > 1) {
+    txt += '\nแยกตามหมวด: ' + S.groups.map(function(g){ return g.name + ' ' + groupTotal(g.id); }).join(' · ');
+  }
+  txt += '\nรวมทั้งงาน ' + t + ' โหวต';
 
   var box = document.getElementById('copybox'), btn = this;
   function fallback(){
@@ -1478,8 +1463,14 @@ function peekBar(){
   if (!IS_DISPLAY) return;
   var bar = document.getElementById('stagebar');
   bar.classList.add('on');
+  /* จองที่ให้แถบเท่าความสูงจริงของมัน กราฟจะได้หดหลบพอดี ไม่ทับชื่อทีม */
+  stageEl.style.setProperty('--barh', (bar.offsetHeight + 26) + 'px');
+  stageEl.classList.add('peeking');
   clearTimeout(peekT);
-  peekT = setTimeout(function(){ bar.classList.remove('on'); }, 3000);
+  peekT = setTimeout(function(){
+    bar.classList.remove('on');
+    stageEl.classList.remove('peeking');
+  }, 4000);
 }
 document.addEventListener('mousemove', function(){ if (IS_DISPLAY && stageVisible()) peekBar(); });
 document.getElementById('stagebar').addEventListener('mouseenter', function(){ clearTimeout(peekT); });
@@ -1493,8 +1484,13 @@ document.addEventListener('keydown', function(e){
   var key = (e.key || '').toLowerCase();
   var code = e.code || '';
 
-  if (tag === 'input' || tag === 'textarea') {
+  /* ชื่องานบนจอเป็น contenteditable ต้องกันไว้ด้วย ไม่งั้นพิมพ์เลขแล้วกลายเป็นกดโหวต */
+  if (tag === 'input' || tag === 'textarea' || e.target.isContentEditable) {
     var f = e.target, ds = f.dataset || {};
+    if (f.isContentEditable) {
+      if (key === 'enter' || key === 'escape') { e.preventDefault(); f.blur(); }
+      return;
+    }
     if (key === 'escape') {
       if (ds.set) { var back0 = byId(ds.set); if (back0) f.value = back0.votes; }   /* ยกเลิกการแก้ */
       f.blur();
